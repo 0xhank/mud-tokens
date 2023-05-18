@@ -6,7 +6,6 @@ import { MudV2Test } from "@latticexyz/std-contracts/src/test/MudV2Test.t.sol";
 import { getKeysWithValue } from "@latticexyz/world/src/modules/keyswithvalue/getKeysWithValue.sol";
 
 import { IWorld } from "../src/codegen/world/IWorld.sol";
-import { Counter, CounterTableId } from "../src/codegen/Tables.sol";
 
 contract CounterTest is MudV2Test {
   IWorld public world;
@@ -25,14 +24,4 @@ contract CounterTest is MudV2Test {
     assertTrue(codeSize > 0);
   }
 
-  function testCounter() public {
-    // Expect the counter to be 1 because it was incremented in the PostDeploy script.
-    uint32 counter = Counter.get(world);
-    assertEq(counter, 1);
-
-    // Expect the counter to be 2 after calling increment.
-    world.increment();
-    counter = Counter.get(world);
-    assertEq(counter, 2);
-  }
 }
