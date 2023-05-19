@@ -31,7 +31,7 @@ library AllowanceTable {
 
   function getKeySchema() internal pure returns (Schema) {
     SchemaType[] memory _schema = new SchemaType[](3);
-    _schema[0] = SchemaType.UINT256;
+    _schema[0] = SchemaType.ADDRESS;
     _schema[1] = SchemaType.ADDRESS;
     _schema[2] = SchemaType.ADDRESS;
 
@@ -68,9 +68,9 @@ library AllowanceTable {
   }
 
   /** Get allowance */
-  function get(uint256 tokenId, address owner, address operator) internal view returns (uint256 allowance) {
+  function get(address tokenId, address owner, address operator) internal view returns (uint256 allowance) {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = bytes32(uint256((tokenId)));
+    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
     _keyTuple[1] = bytes32(uint256(uint160((owner))));
     _keyTuple[2] = bytes32(uint256(uint160((operator))));
 
@@ -81,12 +81,12 @@ library AllowanceTable {
   /** Get allowance (using the specified store) */
   function get(
     IStore _store,
-    uint256 tokenId,
+    address tokenId,
     address owner,
     address operator
   ) internal view returns (uint256 allowance) {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = bytes32(uint256((tokenId)));
+    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
     _keyTuple[1] = bytes32(uint256(uint160((owner))));
     _keyTuple[2] = bytes32(uint256(uint160((operator))));
 
@@ -95,9 +95,9 @@ library AllowanceTable {
   }
 
   /** Set allowance */
-  function set(uint256 tokenId, address owner, address operator, uint256 allowance) internal {
+  function set(address tokenId, address owner, address operator, uint256 allowance) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = bytes32(uint256((tokenId)));
+    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
     _keyTuple[1] = bytes32(uint256(uint160((owner))));
     _keyTuple[2] = bytes32(uint256(uint160((operator))));
 
@@ -105,9 +105,9 @@ library AllowanceTable {
   }
 
   /** Set allowance (using the specified store) */
-  function set(IStore _store, uint256 tokenId, address owner, address operator, uint256 allowance) internal {
+  function set(IStore _store, address tokenId, address owner, address operator, uint256 allowance) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = bytes32(uint256((tokenId)));
+    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
     _keyTuple[1] = bytes32(uint256(uint160((owner))));
     _keyTuple[2] = bytes32(uint256(uint160((operator))));
 
@@ -121,20 +121,20 @@ library AllowanceTable {
 
   /** Encode keys as a bytes32 array using this table's schema */
   function encodeKeyTuple(
-    uint256 tokenId,
+    address tokenId,
     address owner,
     address operator
   ) internal pure returns (bytes32[] memory _keyTuple) {
     _keyTuple = new bytes32[](3);
-    _keyTuple[0] = bytes32(uint256((tokenId)));
+    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
     _keyTuple[1] = bytes32(uint256(uint160((owner))));
     _keyTuple[2] = bytes32(uint256(uint160((operator))));
   }
 
   /* Delete all data for given keys */
-  function deleteRecord(uint256 tokenId, address owner, address operator) internal {
+  function deleteRecord(address tokenId, address owner, address operator) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = bytes32(uint256((tokenId)));
+    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
     _keyTuple[1] = bytes32(uint256(uint160((owner))));
     _keyTuple[2] = bytes32(uint256(uint160((operator))));
 
@@ -142,9 +142,9 @@ library AllowanceTable {
   }
 
   /* Delete all data for given keys (using the specified store) */
-  function deleteRecord(IStore _store, uint256 tokenId, address owner, address operator) internal {
+  function deleteRecord(IStore _store, address tokenId, address owner, address operator) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = bytes32(uint256((tokenId)));
+    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
     _keyTuple[1] = bytes32(uint256(uint160((owner))));
     _keyTuple[2] = bytes32(uint256(uint160((operator))));
 

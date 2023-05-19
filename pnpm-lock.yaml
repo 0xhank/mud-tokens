@@ -730,7 +730,7 @@ packages:
   /@latticexyz/schema-type@2.0.0-alpha.1.137(typescript@4.9.5)(zod@3.21.4):
     resolution: {integrity: sha512-sj06Q+CPLWykGrI7I9mC5dm+jTpl38OUZoLlAgu8uILwYtEz4Phx+NtzlVRpyMtGxTL13FIEmbFiDzPtxrSjmw==}
     dependencies:
-      abitype: 0.8.3(typescript@4.9.5)(zod@3.21.4)
+      abitype: 0.8.4(typescript@4.9.5)(zod@3.21.4)
     transitivePeerDependencies:
       - typescript
       - zod
@@ -738,7 +738,7 @@ packages:
   /@latticexyz/schema-type@2.0.0-alpha.1.137(typescript@5.0.4)(zod@3.21.4):
     resolution: {integrity: sha512-sj06Q+CPLWykGrI7I9mC5dm+jTpl38OUZoLlAgu8uILwYtEz4Phx+NtzlVRpyMtGxTL13FIEmbFiDzPtxrSjmw==}
     dependencies:
-      abitype: 0.8.3(typescript@5.0.4)(zod@3.21.4)
+      abitype: 0.8.4(typescript@5.0.4)(zod@3.21.4)
     transitivePeerDependencies:
       - typescript
       - zod
@@ -1115,8 +1115,8 @@ packages:
       eslint-visitor-keys: 3.4.1
     dev: true
 
-  /abitype@0.8.3(typescript@4.9.5)(zod@3.21.4):
-    resolution: {integrity: sha512-ma+fOVhoLOq68Ht8ysPS+sEIModycx6oqxP9r1Cx79rzcEO7m0beo8o9dxIlZFLn8qv+PczL/Zs4whI5KmhVJg==}
+  /abitype@0.8.4(typescript@4.9.5)(zod@3.21.4):
+    resolution: {integrity: sha512-W6Yxm7Ln1n0H/ghI/Yror0P45/+UCQohCCtSzj7/H5Htj48jJmX9KBym/+OiFl58TvuD9y9plRTsbxdCBdBAog==}
     peerDependencies:
       typescript: '>=5.0.4'
       zod: ^3 >=3.19.1
@@ -1127,8 +1127,8 @@ packages:
       typescript: 4.9.5
       zod: 3.21.4
 
-  /abitype@0.8.3(typescript@5.0.4)(zod@3.21.4):
-    resolution: {integrity: sha512-ma+fOVhoLOq68Ht8ysPS+sEIModycx6oqxP9r1Cx79rzcEO7m0beo8o9dxIlZFLn8qv+PczL/Zs4whI5KmhVJg==}
+  /abitype@0.8.4(typescript@5.0.4)(zod@3.21.4):
+    resolution: {integrity: sha512-W6Yxm7Ln1n0H/ghI/Yror0P45/+UCQohCCtSzj7/H5Htj48jJmX9KBym/+OiFl58TvuD9y9plRTsbxdCBdBAog==}
     peerDependencies:
       typescript: '>=5.0.4'
       zod: ^3 >=3.19.1
@@ -1867,8 +1867,8 @@ packages:
   /fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
 
-  /fast-diff@1.2.0:
-    resolution: {integrity: sha512-xJuoT5+L99XlZ8twedaRf6Ax2TgQVxvgZOYoPKqZufmJib0tL2tegPBOZb1pVNgIhlqDlA0eO0c3wBvQcmzx4w==}
+  /fast-diff@1.3.0:
+    resolution: {integrity: sha512-VxPP4NqbUjj6MaAOafWeUn2cXWLcCtljklUtZf0Ind4XQ+QPtmA0b18zZy0jIQx+ExRVCR/ZQpBmik5lXshNsw==}
     dev: true
 
   /fast-glob@3.2.12:
@@ -2753,7 +2753,7 @@ packages:
   /rxjs@7.8.1:
     resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}
     dependencies:
-      tslib: 2.5.0
+      tslib: 2.5.2
     dev: true
 
   /safer-buffer@2.1.2:
@@ -2843,7 +2843,7 @@ packages:
       commander: 2.18.0
       cosmiconfig: 5.2.1
       eslint: 5.16.0
-      fast-diff: 1.2.0
+      fast-diff: 1.3.0
       glob: 7.2.3
       ignore: 4.0.6
       js-yaml: 3.14.1
@@ -3057,8 +3057,8 @@ packages:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
     dev: true
 
-  /tslib@2.5.0:
-    resolution: {integrity: sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg==}
+  /tslib@2.5.2:
+    resolution: {integrity: sha512-5svOrSA2w3iGFDs1HibEVBGbDrAY82bFQ3HZ3ixB+88nsbsWQoKqDRb5UBYAUPEzbBn6dAp5gRNXglySbx1MlA==}
     dev: true
 
   /tsutils@3.21.0(typescript@4.9.5):
