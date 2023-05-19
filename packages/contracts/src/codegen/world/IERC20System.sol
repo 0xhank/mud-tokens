@@ -14,7 +14,7 @@ interface IERC20System {
 
   function balanceOfERC20(address tokenId, address account) external view returns (uint256);
 
-  function transferERC20(address tokenId, address to, uint256 amount) external returns (bool);
+  function transferERC20(address tokenId, address to, uint256 amount) external;
 
   function allowanceERC20(address tokenId, address owner, address spender) external view returns (uint256);
 
@@ -24,15 +24,15 @@ interface IERC20System {
 
   function increaseAllowanceERC20(address tokenId, address spender, uint256 addedValue) external;
 
-  function decreaseAllowanceERC20(address tokenId, address spender, uint256 subtractedValue) external returns (bool);
+  function decreaseAllowanceERC20(address tokenId, address spender, uint256 subtractedValue) external;
 
   function transferERC20(address tokenId, address from, address to, uint256 amount) external;
 
-  function mint(address tokenId, address account, uint256 amount) external;
+  function mintERC20(address tokenId, address account, uint256 amount) external;
 
-  function burn(address tokenId, address account, uint256 amount) external;
+  function burnERC20(address tokenId, address account, uint256 amount) external;
 
-  function approve(address tokenId, address owner, address spender, uint256 amount) external;
+  function approveERC20(address tokenId, address owner, address spender, uint256 amount) external;
 
-  function spendAllowance(address tokenId, address owner, address spender, uint256 amount) external;
+  function spendAllowanceERC20(address tokenId, address owner, address spender, uint256 amount) external;
 }
