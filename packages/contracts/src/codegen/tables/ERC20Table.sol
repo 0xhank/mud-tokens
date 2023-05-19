@@ -17,10 +17,10 @@ import { EncodeArray } from "@latticexyz/store/src/tightcoder/EncodeArray.sol";
 import { Schema, SchemaLib } from "@latticexyz/store/src/Schema.sol";
 import { PackedCounter, PackedCounterLib } from "@latticexyz/store/src/PackedCounter.sol";
 
-bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("ERC20TokenTable")));
-bytes32 constant ERC20TokenTableTableId = _tableId;
+bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("ERC20Table")));
+bytes32 constant ERC20TableTableId = _tableId;
 
-struct ERC20TokenTableData {
+struct ERC20TableData {
   uint256 balance;
   uint256 allowance;
   uint256 totalSupply;
@@ -28,7 +28,7 @@ struct ERC20TokenTableData {
   string symbol;
 }
 
-library ERC20TokenTable {
+library ERC20Table {
   /** Get the table's schema */
   function getSchema() internal pure returns (Schema) {
     SchemaType[] memory _schema = new SchemaType[](5);
@@ -57,7 +57,7 @@ library ERC20TokenTable {
     _fieldNames[2] = "totalSupply";
     _fieldNames[3] = "name";
     _fieldNames[4] = "symbol";
-    return ("ERC20TokenTable", _fieldNames);
+    return ("ERC20Table", _fieldNames);
   }
 
   /** Register the table's schema */
@@ -471,7 +471,7 @@ library ERC20TokenTable {
   }
 
   /** Get the full data */
-  function get(address tokenId, address id) internal view returns (ERC20TokenTableData memory _table) {
+  function get(address tokenId, address id) internal view returns (ERC20TableData memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
     _keyTuple[1] = bytes32(uint256(uint160((id))));
@@ -481,7 +481,7 @@ library ERC20TokenTable {
   }
 
   /** Get the full data (using the specified store) */
-  function get(IStore _store, address tokenId, address id) internal view returns (ERC20TokenTableData memory _table) {
+  function get(IStore _store, address tokenId, address id) internal view returns (ERC20TableData memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
     _keyTuple[1] = bytes32(uint256(uint160((id))));
@@ -530,17 +530,17 @@ library ERC20TokenTable {
   }
 
   /** Set the full data using the data struct */
-  function set(address tokenId, address id, ERC20TokenTableData memory _table) internal {
+  function set(address tokenId, address id, ERC20TableData memory _table) internal {
     set(tokenId, id, _table.balance, _table.allowance, _table.totalSupply, _table.name, _table.symbol);
   }
 
   /** Set the full data using the data struct (using the specified store) */
-  function set(IStore _store, address tokenId, address id, ERC20TokenTableData memory _table) internal {
+  function set(IStore _store, address tokenId, address id, ERC20TableData memory _table) internal {
     set(_store, tokenId, id, _table.balance, _table.allowance, _table.totalSupply, _table.name, _table.symbol);
   }
 
   /** Decode the tightly packed blob using this table's schema */
-  function decode(bytes memory _blob) internal view returns (ERC20TokenTableData memory _table) {
+  function decode(bytes memory _blob) internal view returns (ERC20TableData memory _table) {
     // 96 is the total byte length of static data
     PackedCounter _encodedLengths = PackedCounter.wrap(Bytes.slice32(_blob, 96));
 

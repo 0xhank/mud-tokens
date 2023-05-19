@@ -2,7 +2,7 @@ import { mudConfig } from "@latticexyz/world/register";
 
 export default mudConfig({
   tables: {
-    ERC20TokenTable: {
+    ERC20Table: {
       keySchema: { tokenId: "address", id: "address" },
       schema: {
         // accessed via owner address

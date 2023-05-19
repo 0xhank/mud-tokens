@@ -4,7 +4,7 @@
 pragma solidity ^0.8.0;
 
 import { System } from "@latticexyz/world/src/System.sol";
-import { ERC20TokenTable } from "../codegen/Tables.sol";
+import { ERC20Table } from "../codegen/Tables.sol";
 import { AllowanceTable } from "../codegen/Tables.sol";
 import { IERC20MUD } from "../proxy/interfaces/IERC20MUD.sol"; 
 import { console } from "forge-std/console.sol";
@@ -18,25 +18,25 @@ contract ERC20System is System {
      * These values are immutable: they can only be set once (ideally during postDeploy script) 
      */
     function initializeERC20(address tokenId, string calldata _name, string calldata _symbol) public {
-      require(ERC20TokenTable.lengthName(tokenId, SingletonKey) == 0, "ERC20: Token already initialized");
-      ERC20TokenTable.setName(tokenId, SingletonKey, _name);
-      ERC20TokenTable.setSymbol(tokenId, SingletonKey, _symbol);
+      require(ERC20Table.lengthName(tokenId, SingletonKey) == 0, "ERC20: Token already initialized");
+      ERC20Table.setName(tokenId, SingletonKey, _name);
+      ERC20Table.setSymbol(tokenId, SingletonKey, _symbol);
     }
 
     function nameERC20(address tokenId) public view returns (string memory) {
-        return ERC20TokenTable.getName(tokenId, SingletonKey);
+        return ERC20Table.getName(tokenId, SingletonKey);
     }
 
     function symbolERC20(address tokenId) public view returns (string memory) {
-        return ERC20TokenTable.getSymbol(tokenId, SingletonKey);
+        return ERC20Table.getSymbol(tokenId, SingletonKey);
     }
   
     function totalSupplyERC20(address tokenId) public view  returns (uint256) {
-        return ERC20TokenTable.getTotalSupply(tokenId, SingletonKey);
+        return ERC20Table.getTotalSupply(tokenId, SingletonKey);
     }
 
     function balanceOfERC20(address tokenId, address account) public view  returns (uint256) {
-        return ERC20TokenTable.getBalance(tokenId, account);
+        return ERC20Table.getBalance(tokenId, account);
     }
 
     function transferERC20(address tokenId, address to, uint256 amount) public returns (bool) {
@@ -85,15 +85,15 @@ contract ERC20System is System {
         require(from != address(0), "ERC20: transfer from the zero address");
         require(to != address(0), "ERC20: transfer to the zero address");
 
-        uint256 fromBalance = ERC20TokenTable.getBalance(tokenId, from);
-        uint256 toBalance = ERC20TokenTable.getBalance(tokenId, to);
+        uint256 fromBalance = ERC20Table.getBalance(tokenId, from);
+        uint256 toBalance = ERC20Table.getBalance(tokenId, to);
         require(fromBalance >= amount, "ERC20: transfer amount exceeds balance");
         unchecked {
-            ERC20TokenTable.setBalance(tokenId, from, fromBalance - amount);
+            ERC20Table.setBalance(tokenId, from, fromBalance - amount);
             // Overflow not possible: the sum of all balances is capped by totalSupply, and the sum is preserved by
             // decrementing then incrementing.
 
-            ERC20TokenTable.setBalance(tokenId, to, toBalance + amount);
+            ERC20Table.setBalance(tokenId, to, toBalance + amount);
         }
 
         // emit transfer
@@ -109,17 +109,17 @@ contract ERC20System is System {
     function _mint(address tokenId, address account, uint256 amount) private {
         require(account != address(0), "ERC20: mint to the zero address");
         console.log('minting');
-        uint256 _totalSupply = ERC20TokenTable.getTotalSupply(tokenId, SingletonKey);
+        uint256 _totalSupply = ERC20Table.getTotalSupply(tokenId, SingletonKey);
         console.log('total supply:', _totalSupply);
 
-        uint256 balance = ERC20TokenTable.getBalance(tokenId, account);
+        uint256 balance = ERC20Table.getBalance(tokenId, account);
         
         console.log('balance:', balance);
-        ERC20TokenTable.setTotalSupply(tokenId, SingletonKey, _totalSupply + amount);
+        ERC20Table.setTotalSupply(tokenId, SingletonKey, _totalSupply + amount);
 
         // unchecked {
             // Overflow not possible: balance + amount is at most totalSupply + amount, which is checked above.
-            ERC20TokenTable.setBalance(tokenId, account, balance + amount);
+            ERC20Table.setBalance(tokenId, account, balance + amount);
         // }
 
         // emit transfer
@@ -135,15 +135,15 @@ contract ERC20System is System {
     function _burn(address tokenId, address account, uint256 amount) private {
         require(account != address(0), "ERC20: burn from the zero address");
 
-        uint256 accountBalance = ERC20TokenTable.getBalance(tokenId, account);
+        uint256 accountBalance = ERC20Table.getBalance(tokenId, account);
 
-        uint256 _totalSupply = ERC20TokenTable.getTotalSupply(tokenId, SingletonKey);
+        uint256 _totalSupply = ERC20Table.getTotalSupply(tokenId, SingletonKey);
         require(accountBalance >= amount, "ERC20: burn amount exceeds balance");
 
         unchecked {
-            ERC20TokenTable.setBalance(tokenId, account, accountBalance - amount);
+            ERC20Table.setBalance(tokenId, account, accountBalance - amount);
             // Overflow not possible: amount <= accountBalance <= totalSupply.
-            ERC20TokenTable.setTotalSupply(tokenId, SingletonKey, _totalSupply - amount);
+            ERC20Table.setTotalSupply(tokenId, SingletonKey, _totalSupply - amount);
         }
 
         // emit transfer

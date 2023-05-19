@@ -6,14 +6,14 @@ import { MudV2Test } from "@latticexyz/std-contracts/src/test/MudV2Test.t.sol";
 import { getKeysWithValue } from "@latticexyz/world/src/modules/keyswithvalue/getKeysWithValue.sol";
 
 import { IWorld } from "../src/codegen/world/IWorld.sol";
-import { SampleToken } from "./SampleToken.sol";
+import { ERC20Token } from "./ERC20Token.sol";
 import {ERC20System, SingletonKey} from "../src/systems/ERC20System.sol";
-import { ERC20TokenTable } from "../src/codegen/Tables.sol";
+import { ERC20Table } from "../src/codegen/Tables.sol";
 
 
 contract ERC20Test is MudV2Test {
   IWorld public world;
-  SampleToken public sampleToken;
+  ERC20Token public sampleToken;
   address public alice = address(uint160(0x69));
   address public tokenId;
 
@@ -21,7 +21,7 @@ contract ERC20Test is MudV2Test {
   function setUp() public override {
     super.setUp();
     world = IWorld(worldAddress);
-    sampleToken = new SampleToken(address(world), alice, initialSupply);
+    sampleToken = new ERC20Token(address(world), alice, initialSupply);
     tokenId = address(sampleToken);
   }
 
@@ -35,7 +35,7 @@ contract ERC20Test is MudV2Test {
   }
 
   function testCreate() public {
-    uint256 aliceTokens = ERC20TokenTable.getBalance(world, tokenId, alice);
+    uint256 aliceTokens = ERC20Table.getBalance(world, tokenId, alice);
     assertEq(aliceTokens, initialSupply);
 
     aliceTokens = sampleToken.balanceOf(alice);
@@ -45,7 +45,7 @@ contract ERC20Test is MudV2Test {
 
     assertEq(supply, initialSupply);
 
-    string memory mudName = ERC20TokenTable.getName(world, tokenId, SingletonKey);
+    string memory mudName = ERC20Table.getName(world, tokenId, SingletonKey);
     string memory proxyName = sampleToken.name();
 
     assertEq(mudName, proxyName);
