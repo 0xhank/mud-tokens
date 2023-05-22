@@ -4,20 +4,18 @@ pragma solidity ^0.8.0;
 
 import "./interfaces/IERC20MUD.sol";
 import { IWorld } from "../codegen/world/IWorld.sol";
-import {ERC20TestTokenMUD } from "../systems/ERC20TestTokenMUD.sol";
-import {ERC20System, SYSTEM_NAME} from "../systems/ERC20System.sol";
-import { ERC20, addressToBytes16} from "../utils.sol";
-import { console } from "forge-std/console.sol";
+import { addressToBytes16} from "../utils.sol";
+import {ERC20System, SYSTEM_NAME } from "../systems/ERC20System.sol";
 
 contract ERC20MUD is IERC20MUD {
 
-    IWorld immutable world;
-    ERC20TestTokenMUD immutable token;
-    bytes16 immutable mudId;
-    constructor(IWorld _world, string memory _name, string memory _symbol) {
+    IWorld private world;
+    ERC20System private token;
+    bytes16 private mudId;
+    function setup(IWorld _world, ERC20System _token) internal {
       world =_world;
       mudId = addressToBytes16(address(this));
-      token = new ERC20TestTokenMUD(world, address(this), _name, _symbol);
+      token = _token;
     }
 
     function name() public view virtual override returns (string memory){
@@ -91,8 +89,6 @@ contract ERC20MUD is IERC20MUD {
     }
 
     function _mint (address account, uint256 amount) internal virtual {
-      console.log('account:', account);
-      console.log('amount:', amount);
       world.call(
         mudId,
         SYSTEM_NAME,
