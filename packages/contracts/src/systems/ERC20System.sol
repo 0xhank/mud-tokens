@@ -4,149 +4,175 @@
 pragma solidity ^0.8.0;
 
 import { System } from "@latticexyz/world/src/System.sol";
+import { IWorld } from "../codegen/world/IWorld.sol";
 import { ERC20Table } from "../codegen/Tables.sol";
+// import { ERC20TestToken} from "./ERC20TestToken.sol";
 import { AllowanceTable } from "../codegen/Tables.sol";
 import { IERC20MUD } from "../proxy/interfaces/IERC20MUD.sol"; 
 import { ERC20MUD } from "../proxy/ERC20MUD.sol"; 
 import { console } from "forge-std/console.sol";
-
-address constant SingletonKey = address(uint160(0x060D));
+import {SingletonKey, ERC20, ALLOWANCE, tokenToTable, addressToBytes16} from "../utils.sol";
 
 
 contract ERC20System is System {
+
     /**
      * @dev Sets the values for {name} and {symbol}.
      * These values are immutable: they can only be set once (ideally during postDeploy script) 
      */
-    function initializeERC20(address tokenId, string calldata _name, string calldata _symbol) public {
-      require(ERC20Table.lengthName(tokenId, SingletonKey) == 0, "ERC20: Token already initialized");
-      ERC20Table.setName(tokenId, SingletonKey, _name);
-      ERC20Table.setSymbol(tokenId, SingletonKey, _symbol);
+    IWorld immutable world;
+    address tokenId;
+    bytes32 immutable ERC20Namespace;
+    bytes32 immutable allowanceNamespace;
+    constructor(IWorld _world, address _tokenId, string memory _name, string memory _symbol) {
+      world = _world;
+      tokenId = _tokenId;
+      bytes16 namespace = addressToBytes16(tokenId);
+
+      // register this system
+      bytes16 system = bytes16('ERC20System');
+      world.registerSystem(namespace, bytes16('ERC20System'), this, true);
+      world.registerFunctionSelector(namespace, system, "name", "()");
+      world.registerFunctionSelector(namespace, system, "symbol", "()");
+      world.registerFunctionSelector(namespace, system, "totalSupply", "()");
+      world.registerFunctionSelector(namespace, system, "balanceOf", "(address)");
+      world.registerFunctionSelector(namespace, system, "transfer", "(address, uint256)");
+      world.registerFunctionSelector(namespace, system, "allowance", "(address, address)");
+      world.registerFunctionSelector(namespace, system, "approve", "(address, uint256)");
+      world.registerFunctionSelector(namespace, system, "transferFrom", "(address, address, uint256)");
+      world.registerFunctionSelector(namespace, system, "increaseAllowance", "(address, uint256)");
+      world.registerFunctionSelector(namespace, system, "decreaseAllowance", "(address, uint256)");
+
+      world.registerTable(namespace, ERC20, ERC20Table.getSchema(), ERC20Table.getKeySchema());
+      world.registerTable(namespace, ALLOWANCE, AllowanceTable.getSchema(), AllowanceTable.getKeySchema());
+
+      ERC20Namespace =bytes32(abi.encodePacked(namespace, ERC20)); 
+      allowanceNamespace =bytes32(abi.encodePacked(namespace, ALLOWANCE)); 
+      ERC20Table.setName(ERC20Namespace, SingletonKey, _name);
+      ERC20Table.setSymbol(ERC20Namespace, SingletonKey, _symbol);
     }
 
-    function nameERC20(address tokenId) public view returns (string memory) {
-        return ERC20Table.getName(tokenId, SingletonKey);
+    function name() public view virtual returns (string memory) {
+        return ERC20Table.getName(ERC20Namespace, SingletonKey);
     }
-    function symbolERC20(address tokenId) public view returns (string memory) {
-        return ERC20Table.getSymbol(tokenId, SingletonKey);
+    function symbol() public view virtual returns (string memory) {
+        return ERC20Table.getSymbol(ERC20Namespace, SingletonKey);
     }
   
-    function totalSupplyERC20(address tokenId) public view  returns (uint256) {
-        return ERC20Table.getTotalSupply(tokenId, SingletonKey);
+    function totalSupply() public view  virtual returns (uint256) {
+        return ERC20Table.getTotalSupply(ERC20Namespace, SingletonKey);
     }
 
-    function balanceOfERC20(address tokenId, address account) public view  returns (uint256) {
-        return ERC20Table.getBalance(tokenId, account);
+    function balanceOf(address account) public view  virtual returns (uint256) {
+        return ERC20Table.getBalance(ERC20Namespace, account);
     }
 
-    function transferERC20(address tokenId, address to, uint256 amount) public {
+    function transfer(address to, uint256 amount) public virtual{
         address owner = _msgSender();
-        _transfer(tokenId, owner, to, amount);
+        _transfer(owner, to, amount);
     }
 
-    function allowanceERC20(address tokenId, address owner, address spender) public view returns (uint256) {
-        return AllowanceTable.get(tokenId, owner, spender);
+    function allowance(address owner, address spender) public virtual view returns (uint256) {
+        return AllowanceTable.get(allowanceNamespace, owner, spender);
     }
     
-    function approveERC20(address tokenId, address spender, uint256 amount) public {
+    function approve(address spender, uint256 amount) public virtual {
         address owner = _msgSender();
-        _approve(tokenId, owner, spender, amount);
+        _approve(owner, spender, amount);
     }
 
-    function transferFromERC20(address tokenId, address from, address to, uint256 amount) public {
+    function transferFrom(address from, address to, uint256 amount) public virtual {
         address spender = _msgSender();
-        _spendAllowance(tokenId, from, spender, amount);
-        _transfer(tokenId, from, to, amount);
+        _spendAllowance(from, spender, amount);
+        _transfer(from, to, amount);
     }
     
-    function increaseAllowanceERC20(address tokenId, address spender, uint256 addedValue) public virtual {
+    function increaseAllowance(address spender, uint256 addedValue) public virtual {
         address owner = _msgSender();
-        _approve(tokenId, owner, spender, allowanceERC20(tokenId, owner, spender) + addedValue);
+        _approve(owner, spender, allowance(owner, spender) + addedValue);
     }
 
-    function decreaseAllowanceERC20(address tokenId, address spender, uint256 subtractedValue) public virtual {
+    function decreaseAllowance(address spender, uint256 subtractedValue) virtual public {
         address owner = _msgSender();
-        uint256 currentAllowance = allowanceERC20(tokenId, owner, spender);
+        uint256 currentAllowance = allowance(owner, spender);
         require(currentAllowance >= subtractedValue, "ERC20: decreased allowance below zero");
-        _approve(tokenId, owner, spender, currentAllowance - subtractedValue);
+        _approve(owner, spender, currentAllowance - subtractedValue);
     }
 
-    function transferERC20(address tokenId, address from, address to, uint256 amount) public {
+    function transfer(address from, address to, uint256 amount) virtual public {
       require(_msgSender() == tokenId, "ERC20System: not authorized to transfer");
-      _transfer(tokenId, from, to, amount);
+      _transfer(from, to, amount);
     }
 
-    function mintERC20(address tokenId, address account, uint256 amount) public {
+    function mint(address account, uint256 amount) virtual public {
       require(_msgSender() == tokenId, "ERC20System: not authorized to mint");
-      _mint(tokenId, account, amount);
+      _mint(account, amount);
     }
 
-    function burnERC20(address tokenId, address account, uint256 amount) public {
+    function burn(address account, uint256 amount) virtual public {
       require(_msgSender() == tokenId, "ERC20System: not authorized to burn");
-      _burn(tokenId, account, amount);
+      _burn(account, amount);
     } 
 
-    function approveERC20(address tokenId, address owner, address spender, uint256 amount) public {
+    function approve(address owner, address spender, uint256 amount) public {
       require(_msgSender() == tokenId, "ERC20System: not authorized to approve");
-      _approve(tokenId, owner, spender, amount);
+      _approve(owner, spender, amount);
     }
 
-    function spendAllowanceERC20(address tokenId, address owner, address spender, uint256 amount) public {
+    function spendAllowance(address owner, address spender, uint256 amount) public {
       require(_msgSender() == tokenId, "ERC20System: not authorized to spend allowance");
-      _spendAllowance(tokenId, owner, spender, amount);
+      _spendAllowance(owner, spender, amount);
     }
 
-    function _transfer(address tokenId, address from, address to, uint256 amount) private {
+    function _transfer(address from, address to, uint256 amount) internal {
         require(from != address(0), "ERC20: transfer from the zero address");
         require(to != address(0), "ERC20: transfer to the zero address");
 
-        uint256 fromBalance = ERC20Table.getBalance(tokenId, from);
-        uint256 toBalance = ERC20Table.getBalance(tokenId, to);
+        uint256 fromBalance = ERC20Table.getBalance(ERC20Namespace, from);
+        uint256 toBalance = ERC20Table.getBalance(ERC20Namespace, to);
         require(fromBalance >= amount, "ERC20: transfer amount exceeds balance");
-        ERC20Table.setBalance(tokenId, from, fromBalance - amount);
-        ERC20Table.setBalance(tokenId, to, toBalance + amount);
+        ERC20Table.setBalance(ERC20Namespace, from, fromBalance - amount);
+        ERC20Table.setBalance(ERC20Namespace, to, toBalance + amount);
 
         IERC20MUD(tokenId).emitTransfer(from, to, amount);
     }
 
-    function _mint(address tokenId, address account, uint256 amount) private {
+    function _mint(address account, uint256 amount) internal {
         require(account != address(0), "ERC20: mint to the zero address");
-        uint256 _totalSupply = ERC20Table.getTotalSupply(tokenId, SingletonKey);
-        uint256 balance = ERC20Table.getBalance(tokenId, account);
+        uint256 _totalSupply = ERC20Table.getTotalSupply(ERC20Namespace, SingletonKey);
+        uint256 balance = ERC20Table.getBalance(ERC20Namespace, account);
         
-        ERC20Table.setTotalSupply(tokenId, SingletonKey, _totalSupply + amount);
+        ERC20Table.setTotalSupply(ERC20Namespace, SingletonKey, _totalSupply + amount);
 
-        ERC20Table.setBalance(tokenId, account, balance + amount);
+        ERC20Table.setBalance(ERC20Namespace, account, balance + amount);
         IERC20MUD(tokenId).emitTransfer(address(0), account, amount);
     }
 
-    function _burn(address tokenId, address account, uint256 amount) private {
+    function _burn(address account, uint256 amount) internal {
         require(account != address(0), "ERC20: burn from the zero address");
 
-        uint256 accountBalance = ERC20Table.getBalance(tokenId, account);
+        uint256 accountBalance = ERC20Table.getBalance(ERC20Namespace, account);
 
-        uint256 _totalSupply = ERC20Table.getTotalSupply(tokenId, SingletonKey);
+        uint256 _totalSupply = ERC20Table.getTotalSupply(ERC20Namespace, SingletonKey);
         require(accountBalance >= amount, "ERC20: burn amount exceeds balance");
 
-        ERC20Table.setBalance(tokenId, account, accountBalance - amount);
-        ERC20Table.setTotalSupply(tokenId, SingletonKey, _totalSupply - amount);
+        ERC20Table.setBalance(ERC20Namespace, account, accountBalance - amount);
+        ERC20Table.setTotalSupply(ERC20Namespace, SingletonKey, _totalSupply - amount);
 
         IERC20MUD(tokenId).emitTransfer(account, address(0), amount);
     }
     
-    function _approve(address tokenId, address owner, address spender, uint256 amount) private {
+    function _approve(address owner, address spender, uint256 amount) internal {
         require(owner != address(0), "ERC20: approve from the zero address");
         require(spender != address(0), "ERC20: approve to the zero address");
-        AllowanceTable.set(tokenId, owner, spender, amount);
+        AllowanceTable.set(allowanceNamespace, owner, spender, amount);
     }
 
-    
-
-    function _spendAllowance(address tokenId, address owner, address spender, uint256 amount) private {
-        uint256 currentAllowance = allowanceERC20(tokenId, owner, spender);
+    function _spendAllowance(address owner, address spender, uint256 amount) internal {
+        uint256 currentAllowance = allowance(owner, spender);
         if (currentAllowance != type(uint256).max) {
             require(currentAllowance >= amount, "ERC20: insufficient allowance");
-            _approve(tokenId, owner, spender, currentAllowance - amount);
+            _approve(owner, spender, currentAllowance - amount);
         }
 
       IERC20MUD(tokenId).emitApproval(owner, spender, amount);

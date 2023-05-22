@@ -17,9 +17,6 @@ import { EncodeArray } from "@latticexyz/store/src/tightcoder/EncodeArray.sol";
 import { Schema, SchemaLib } from "@latticexyz/store/src/Schema.sol";
 import { PackedCounter, PackedCounterLib } from "@latticexyz/store/src/PackedCounter.sol";
 
-bytes32 constant _tableId = bytes32(abi.encodePacked(bytes16(""), bytes16("ERC20Table")));
-bytes32 constant ERC20TableTableId = _tableId;
-
 struct ERC20TableData {
   uint256 balance;
   uint256 allowance;
@@ -42,9 +39,8 @@ library ERC20Table {
   }
 
   function getKeySchema() internal pure returns (Schema) {
-    SchemaType[] memory _schema = new SchemaType[](2);
+    SchemaType[] memory _schema = new SchemaType[](1);
     _schema[0] = SchemaType.ADDRESS;
-    _schema[1] = SchemaType.ADDRESS;
 
     return SchemaLib.encode(_schema);
   }
@@ -61,204 +57,185 @@ library ERC20Table {
   }
 
   /** Register the table's schema */
-  function registerSchema() internal {
+  function registerSchema(bytes32 _tableId) internal {
     StoreSwitch.registerSchema(_tableId, getSchema(), getKeySchema());
   }
 
   /** Register the table's schema (using the specified store) */
-  function registerSchema(IStore _store) internal {
+  function registerSchema(IStore _store, bytes32 _tableId) internal {
     _store.registerSchema(_tableId, getSchema(), getKeySchema());
   }
 
   /** Set the table's metadata */
-  function setMetadata() internal {
+  function setMetadata(bytes32 _tableId) internal {
     (string memory _tableName, string[] memory _fieldNames) = getMetadata();
     StoreSwitch.setMetadata(_tableId, _tableName, _fieldNames);
   }
 
   /** Set the table's metadata (using the specified store) */
-  function setMetadata(IStore _store) internal {
+  function setMetadata(IStore _store, bytes32 _tableId) internal {
     (string memory _tableName, string[] memory _fieldNames) = getMetadata();
     _store.setMetadata(_tableId, _tableName, _fieldNames);
   }
 
   /** Get balance */
-  function getBalance(address tokenId, address id) internal view returns (uint256 balance) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function getBalance(bytes32 _tableId, address id) internal view returns (uint256 balance) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 0);
     return (uint256(Bytes.slice32(_blob, 0)));
   }
 
   /** Get balance (using the specified store) */
-  function getBalance(IStore _store, address tokenId, address id) internal view returns (uint256 balance) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function getBalance(IStore _store, bytes32 _tableId, address id) internal view returns (uint256 balance) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     bytes memory _blob = _store.getField(_tableId, _keyTuple, 0);
     return (uint256(Bytes.slice32(_blob, 0)));
   }
 
   /** Set balance */
-  function setBalance(address tokenId, address id, uint256 balance) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function setBalance(bytes32 _tableId, address id, uint256 balance) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     StoreSwitch.setField(_tableId, _keyTuple, 0, abi.encodePacked((balance)));
   }
 
   /** Set balance (using the specified store) */
-  function setBalance(IStore _store, address tokenId, address id, uint256 balance) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function setBalance(IStore _store, bytes32 _tableId, address id, uint256 balance) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     _store.setField(_tableId, _keyTuple, 0, abi.encodePacked((balance)));
   }
 
   /** Get allowance */
-  function getAllowance(address tokenId, address id) internal view returns (uint256 allowance) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function getAllowance(bytes32 _tableId, address id) internal view returns (uint256 allowance) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 1);
     return (uint256(Bytes.slice32(_blob, 0)));
   }
 
   /** Get allowance (using the specified store) */
-  function getAllowance(IStore _store, address tokenId, address id) internal view returns (uint256 allowance) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function getAllowance(IStore _store, bytes32 _tableId, address id) internal view returns (uint256 allowance) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     bytes memory _blob = _store.getField(_tableId, _keyTuple, 1);
     return (uint256(Bytes.slice32(_blob, 0)));
   }
 
   /** Set allowance */
-  function setAllowance(address tokenId, address id, uint256 allowance) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function setAllowance(bytes32 _tableId, address id, uint256 allowance) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     StoreSwitch.setField(_tableId, _keyTuple, 1, abi.encodePacked((allowance)));
   }
 
   /** Set allowance (using the specified store) */
-  function setAllowance(IStore _store, address tokenId, address id, uint256 allowance) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function setAllowance(IStore _store, bytes32 _tableId, address id, uint256 allowance) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     _store.setField(_tableId, _keyTuple, 1, abi.encodePacked((allowance)));
   }
 
   /** Get totalSupply */
-  function getTotalSupply(address tokenId, address id) internal view returns (uint256 totalSupply) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function getTotalSupply(bytes32 _tableId, address id) internal view returns (uint256 totalSupply) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 2);
     return (uint256(Bytes.slice32(_blob, 0)));
   }
 
   /** Get totalSupply (using the specified store) */
-  function getTotalSupply(IStore _store, address tokenId, address id) internal view returns (uint256 totalSupply) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function getTotalSupply(IStore _store, bytes32 _tableId, address id) internal view returns (uint256 totalSupply) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     bytes memory _blob = _store.getField(_tableId, _keyTuple, 2);
     return (uint256(Bytes.slice32(_blob, 0)));
   }
 
   /** Set totalSupply */
-  function setTotalSupply(address tokenId, address id, uint256 totalSupply) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function setTotalSupply(bytes32 _tableId, address id, uint256 totalSupply) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     StoreSwitch.setField(_tableId, _keyTuple, 2, abi.encodePacked((totalSupply)));
   }
 
   /** Set totalSupply (using the specified store) */
-  function setTotalSupply(IStore _store, address tokenId, address id, uint256 totalSupply) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function setTotalSupply(IStore _store, bytes32 _tableId, address id, uint256 totalSupply) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     _store.setField(_tableId, _keyTuple, 2, abi.encodePacked((totalSupply)));
   }
 
   /** Get name */
-  function getName(address tokenId, address id) internal view returns (string memory name) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function getName(bytes32 _tableId, address id) internal view returns (string memory name) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 3);
     return (string(_blob));
   }
 
   /** Get name (using the specified store) */
-  function getName(IStore _store, address tokenId, address id) internal view returns (string memory name) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function getName(IStore _store, bytes32 _tableId, address id) internal view returns (string memory name) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     bytes memory _blob = _store.getField(_tableId, _keyTuple, 3);
     return (string(_blob));
   }
 
   /** Set name */
-  function setName(address tokenId, address id, string memory name) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function setName(bytes32 _tableId, address id, string memory name) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     StoreSwitch.setField(_tableId, _keyTuple, 3, bytes((name)));
   }
 
   /** Set name (using the specified store) */
-  function setName(IStore _store, address tokenId, address id, string memory name) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function setName(IStore _store, bytes32 _tableId, address id, string memory name) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     _store.setField(_tableId, _keyTuple, 3, bytes((name)));
   }
 
   /** Get the length of name */
-  function lengthName(address tokenId, address id) internal view returns (uint256) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function lengthName(bytes32 _tableId, address id) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     uint256 _byteLength = StoreSwitch.getFieldLength(_tableId, _keyTuple, 3, getSchema());
     return _byteLength / 1;
   }
 
   /** Get the length of name (using the specified store) */
-  function lengthName(IStore _store, address tokenId, address id) internal view returns (uint256) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function lengthName(IStore _store, bytes32 _tableId, address id) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     uint256 _byteLength = _store.getFieldLength(_tableId, _keyTuple, 3, getSchema());
     return _byteLength / 1;
   }
 
   /** Get an item of name (unchecked, returns invalid data if index overflows) */
-  function getItemName(address tokenId, address id, uint256 _index) internal view returns (string memory) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function getItemName(bytes32 _tableId, address id, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     bytes memory _blob = StoreSwitch.getFieldSlice(_tableId, _keyTuple, 3, getSchema(), _index * 1, (_index + 1) * 1);
     return (string(_blob));
@@ -267,135 +244,121 @@ library ERC20Table {
   /** Get an item of name (using the specified store) (unchecked, returns invalid data if index overflows) */
   function getItemName(
     IStore _store,
-    address tokenId,
+    bytes32 _tableId,
     address id,
     uint256 _index
   ) internal view returns (string memory) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     bytes memory _blob = _store.getFieldSlice(_tableId, _keyTuple, 3, getSchema(), _index * 1, (_index + 1) * 1);
     return (string(_blob));
   }
 
   /** Push a slice to name */
-  function pushName(address tokenId, address id, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function pushName(bytes32 _tableId, address id, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     StoreSwitch.pushToField(_tableId, _keyTuple, 3, bytes((_slice)));
   }
 
   /** Push a slice to name (using the specified store) */
-  function pushName(IStore _store, address tokenId, address id, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function pushName(IStore _store, bytes32 _tableId, address id, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     _store.pushToField(_tableId, _keyTuple, 3, bytes((_slice)));
   }
 
   /** Pop a slice from name */
-  function popName(address tokenId, address id) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function popName(bytes32 _tableId, address id) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     StoreSwitch.popFromField(_tableId, _keyTuple, 3, 1);
   }
 
   /** Pop a slice from name (using the specified store) */
-  function popName(IStore _store, address tokenId, address id) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function popName(IStore _store, bytes32 _tableId, address id) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     _store.popFromField(_tableId, _keyTuple, 3, 1);
   }
 
   /** Update a slice of name at `_index` */
-  function updateName(address tokenId, address id, uint256 _index, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function updateName(bytes32 _tableId, address id, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     StoreSwitch.updateInField(_tableId, _keyTuple, 3, _index * 1, bytes((_slice)));
   }
 
   /** Update a slice of name (using the specified store) at `_index` */
-  function updateName(IStore _store, address tokenId, address id, uint256 _index, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function updateName(IStore _store, bytes32 _tableId, address id, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     _store.updateInField(_tableId, _keyTuple, 3, _index * 1, bytes((_slice)));
   }
 
   /** Get symbol */
-  function getSymbol(address tokenId, address id) internal view returns (string memory symbol) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function getSymbol(bytes32 _tableId, address id) internal view returns (string memory symbol) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     bytes memory _blob = StoreSwitch.getField(_tableId, _keyTuple, 4);
     return (string(_blob));
   }
 
   /** Get symbol (using the specified store) */
-  function getSymbol(IStore _store, address tokenId, address id) internal view returns (string memory symbol) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function getSymbol(IStore _store, bytes32 _tableId, address id) internal view returns (string memory symbol) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     bytes memory _blob = _store.getField(_tableId, _keyTuple, 4);
     return (string(_blob));
   }
 
   /** Set symbol */
-  function setSymbol(address tokenId, address id, string memory symbol) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function setSymbol(bytes32 _tableId, address id, string memory symbol) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     StoreSwitch.setField(_tableId, _keyTuple, 4, bytes((symbol)));
   }
 
   /** Set symbol (using the specified store) */
-  function setSymbol(IStore _store, address tokenId, address id, string memory symbol) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function setSymbol(IStore _store, bytes32 _tableId, address id, string memory symbol) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     _store.setField(_tableId, _keyTuple, 4, bytes((symbol)));
   }
 
   /** Get the length of symbol */
-  function lengthSymbol(address tokenId, address id) internal view returns (uint256) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function lengthSymbol(bytes32 _tableId, address id) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     uint256 _byteLength = StoreSwitch.getFieldLength(_tableId, _keyTuple, 4, getSchema());
     return _byteLength / 1;
   }
 
   /** Get the length of symbol (using the specified store) */
-  function lengthSymbol(IStore _store, address tokenId, address id) internal view returns (uint256) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function lengthSymbol(IStore _store, bytes32 _tableId, address id) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     uint256 _byteLength = _store.getFieldLength(_tableId, _keyTuple, 4, getSchema());
     return _byteLength / 1;
   }
 
   /** Get an item of symbol (unchecked, returns invalid data if index overflows) */
-  function getItemSymbol(address tokenId, address id, uint256 _index) internal view returns (string memory) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function getItemSymbol(bytes32 _tableId, address id, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     bytes memory _blob = StoreSwitch.getFieldSlice(_tableId, _keyTuple, 4, getSchema(), _index * 1, (_index + 1) * 1);
     return (string(_blob));
@@ -404,87 +367,78 @@ library ERC20Table {
   /** Get an item of symbol (using the specified store) (unchecked, returns invalid data if index overflows) */
   function getItemSymbol(
     IStore _store,
-    address tokenId,
+    bytes32 _tableId,
     address id,
     uint256 _index
   ) internal view returns (string memory) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     bytes memory _blob = _store.getFieldSlice(_tableId, _keyTuple, 4, getSchema(), _index * 1, (_index + 1) * 1);
     return (string(_blob));
   }
 
   /** Push a slice to symbol */
-  function pushSymbol(address tokenId, address id, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function pushSymbol(bytes32 _tableId, address id, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     StoreSwitch.pushToField(_tableId, _keyTuple, 4, bytes((_slice)));
   }
 
   /** Push a slice to symbol (using the specified store) */
-  function pushSymbol(IStore _store, address tokenId, address id, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function pushSymbol(IStore _store, bytes32 _tableId, address id, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     _store.pushToField(_tableId, _keyTuple, 4, bytes((_slice)));
   }
 
   /** Pop a slice from symbol */
-  function popSymbol(address tokenId, address id) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function popSymbol(bytes32 _tableId, address id) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     StoreSwitch.popFromField(_tableId, _keyTuple, 4, 1);
   }
 
   /** Pop a slice from symbol (using the specified store) */
-  function popSymbol(IStore _store, address tokenId, address id) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function popSymbol(IStore _store, bytes32 _tableId, address id) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     _store.popFromField(_tableId, _keyTuple, 4, 1);
   }
 
   /** Update a slice of symbol at `_index` */
-  function updateSymbol(address tokenId, address id, uint256 _index, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function updateSymbol(bytes32 _tableId, address id, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     StoreSwitch.updateInField(_tableId, _keyTuple, 4, _index * 1, bytes((_slice)));
   }
 
   /** Update a slice of symbol (using the specified store) at `_index` */
-  function updateSymbol(IStore _store, address tokenId, address id, uint256 _index, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function updateSymbol(IStore _store, bytes32 _tableId, address id, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     _store.updateInField(_tableId, _keyTuple, 4, _index * 1, bytes((_slice)));
   }
 
   /** Get the full data */
-  function get(address tokenId, address id) internal view returns (ERC20TableData memory _table) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function get(bytes32 _tableId, address id) internal view returns (ERC20TableData memory _table) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     bytes memory _blob = StoreSwitch.getRecord(_tableId, _keyTuple, getSchema());
     return decode(_blob);
   }
 
   /** Get the full data (using the specified store) */
-  function get(IStore _store, address tokenId, address id) internal view returns (ERC20TableData memory _table) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function get(IStore _store, bytes32 _tableId, address id) internal view returns (ERC20TableData memory _table) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     bytes memory _blob = _store.getRecord(_tableId, _keyTuple, getSchema());
     return decode(_blob);
@@ -492,7 +446,7 @@ library ERC20Table {
 
   /** Set the full data using individual values */
   function set(
-    address tokenId,
+    bytes32 _tableId,
     address id,
     uint256 balance,
     uint256 allowance,
@@ -502,9 +456,8 @@ library ERC20Table {
   ) internal {
     bytes memory _data = encode(balance, allowance, totalSupply, name, symbol);
 
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     StoreSwitch.setRecord(_tableId, _keyTuple, _data);
   }
@@ -512,7 +465,7 @@ library ERC20Table {
   /** Set the full data using individual values (using the specified store) */
   function set(
     IStore _store,
-    address tokenId,
+    bytes32 _tableId,
     address id,
     uint256 balance,
     uint256 allowance,
@@ -522,21 +475,20 @@ library ERC20Table {
   ) internal {
     bytes memory _data = encode(balance, allowance, totalSupply, name, symbol);
 
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     _store.setRecord(_tableId, _keyTuple, _data);
   }
 
   /** Set the full data using the data struct */
-  function set(address tokenId, address id, ERC20TableData memory _table) internal {
-    set(tokenId, id, _table.balance, _table.allowance, _table.totalSupply, _table.name, _table.symbol);
+  function set(bytes32 _tableId, address id, ERC20TableData memory _table) internal {
+    set(_tableId, id, _table.balance, _table.allowance, _table.totalSupply, _table.name, _table.symbol);
   }
 
   /** Set the full data using the data struct (using the specified store) */
-  function set(IStore _store, address tokenId, address id, ERC20TableData memory _table) internal {
-    set(_store, tokenId, id, _table.balance, _table.allowance, _table.totalSupply, _table.name, _table.symbol);
+  function set(IStore _store, bytes32 _tableId, address id, ERC20TableData memory _table) internal {
+    set(_store, _tableId, id, _table.balance, _table.allowance, _table.totalSupply, _table.name, _table.symbol);
   }
 
   /** Decode the tightly packed blob using this table's schema */
@@ -583,26 +535,23 @@ library ERC20Table {
   }
 
   /** Encode keys as a bytes32 array using this table's schema */
-  function encodeKeyTuple(address tokenId, address id) internal pure returns (bytes32[] memory _keyTuple) {
-    _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function encodeKeyTuple(address id) internal pure returns (bytes32[] memory _keyTuple) {
+    _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
   }
 
   /* Delete all data for given keys */
-  function deleteRecord(address tokenId, address id) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function deleteRecord(bytes32 _tableId, address id) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
 
   /* Delete all data for given keys (using the specified store) */
-  function deleteRecord(IStore _store, address tokenId, address id) internal {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = bytes32(uint256(uint160((tokenId))));
-    _keyTuple[1] = bytes32(uint256(uint160((id))));
+  function deleteRecord(IStore _store, bytes32 _tableId, address id) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(uint160((id))));
 
     _store.deleteRecord(_tableId, _keyTuple);
   }

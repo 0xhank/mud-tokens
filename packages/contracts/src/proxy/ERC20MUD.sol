@@ -4,22 +4,24 @@ pragma solidity ^0.8.0;
 
 import "./interfaces/IERC20MUD.sol";
 import { IWorld } from "../codegen/world/IWorld.sol";
+import {ERC20TestTokenMUD } from "../systems/ERC20TestTokenMUD.sol";
+import { ERC20, addressToBytes16} from "../utils.sol";
 
 contract ERC20MUD is IERC20MUD {
 
-    IWorld private world;
-    
-    constructor(address _worldAddress, string memory _name, string memory _symbol) {
-      world = IWorld(_worldAddress);
-      world.initializeERC20(address(this), _name, _symbol);
+    IWorld immutable world;
+    ERC20TestTokenMUD immutable token;
+    constructor(IWorld _world, string memory _name, string memory _symbol) {
+      world =_world;
+      token = new ERC20TestTokenMUD(world, address(this), _name, _symbol);
     }
 
     function name() public view virtual override returns (string memory){
-      return world.nameERC20(address(this));
+      return token.name();
     }
 
     function symbol() public view virtual override returns (string memory){
-      return world.symbolERC20(address(this));
+      return token.symbol();
     }
 
     function decimals() public view virtual override returns (uint8){
@@ -27,11 +29,11 @@ contract ERC20MUD is IERC20MUD {
     }
 
     function totalSupply() public view virtual override returns (uint256){
-      return world.totalSupplyERC20(address(this));
+      return token.totalSupply();
     }
 
     function balanceOf(address account) public view virtual override returns (uint256){
-      return world.balanceOfERC20(address(this), account);
+      return token.balanceOf(account);
     }
 
     function transfer(address to, uint256 amount) public virtual override returns (bool){
@@ -40,7 +42,7 @@ contract ERC20MUD is IERC20MUD {
     }
 
     function allowance(address owner, address spender) public view virtual override returns (uint256){
-      return world.allowanceERC20(address(this), owner, spender);
+      return token.allowance(owner, spender);
     }
 
     function approve(address spender, uint256 amount) public virtual override returns (bool){
@@ -72,23 +74,23 @@ contract ERC20MUD is IERC20MUD {
     }
 
     function _transfer(address from, address to, uint256 amount) internal virtual {
-      world.transferERC20(address(this), from, to, amount);
+      token.transfer(from, to, amount);
     }
 
     function _mint (address account, uint256 amount) internal virtual {
-      world.mintERC20(address(this), account, amount);
+      token.mint(account, amount);
     }
 
     function _burn (address account, uint256 amount) internal virtual {
-      world.burnERC20(address(this), account, amount);
+      token.burn(account, amount);
     }
 
     function _approve (address owner, address spender, uint256 amount) internal virtual {
-      world.approveERC20(address(this), owner, spender, amount);
+      token.approve(owner, spender, amount);
     }
 
     function _spendAllowance (address owner, address spender, uint256 amount) internal virtual {
-      world.spendAllowanceERC20(address(this), owner, spender, amount);
+      token.spendAllowance(owner, spender, amount);
     }
 
     function emitApproval(address owner, address spender, uint256 value) public virtual {

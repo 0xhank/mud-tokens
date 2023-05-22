@@ -1,22 +1,25 @@
 import { mudConfig } from "@latticexyz/world/register";
 
 export default mudConfig({
+  excludeSystems: ["ERC20System", "ERC20TestToken"],
   tables: {
     ERC20Table: {
-      keySchema: { tokenId: "address", id: "address" },
+      keySchema: { id: "address" },
+      tableIdArgument: true,
       schema: {
         // accessed via owner address
         balance: "uint256",
         allowance: "uint256",
 
-        // only accessed via Singleton Key, set once during post deploy script
+        // only accessed via Singleton Key, set once during deployment of proxy
         totalSupply: "uint256",
         name: "string",
         symbol: "string",
       },
     },
     AllowanceTable: {
-      keySchema: { tokenId: "address", owner: "address", operator: "address" },
+      keySchema: { owner: "address", operator: "address" },
+      tableIdArgument: true,
       schema: {
         allowance: "uint256",
       },
