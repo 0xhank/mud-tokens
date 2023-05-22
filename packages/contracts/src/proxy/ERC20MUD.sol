@@ -5,14 +5,18 @@ pragma solidity ^0.8.0;
 import "./interfaces/IERC20MUD.sol";
 import { IWorld } from "../codegen/world/IWorld.sol";
 import {ERC20TestTokenMUD } from "../systems/ERC20TestTokenMUD.sol";
+import {ERC20System, SYSTEM_NAME} from "../systems/ERC20System.sol";
 import { ERC20, addressToBytes16} from "../utils.sol";
+import { console } from "forge-std/console.sol";
 
 contract ERC20MUD is IERC20MUD {
 
     IWorld immutable world;
     ERC20TestTokenMUD immutable token;
+    bytes16 immutable mudId;
     constructor(IWorld _world, string memory _name, string memory _symbol) {
       world =_world;
+      mudId = addressToBytes16(address(this));
       token = new ERC20TestTokenMUD(world, address(this), _name, _symbol);
     }
 
@@ -74,32 +78,78 @@ contract ERC20MUD is IERC20MUD {
     }
 
     function _transfer(address from, address to, uint256 amount) internal virtual {
-      token.transfer(from, to, amount);
+      world.call(
+        mudId,
+        SYSTEM_NAME,
+        abi.encodeWithSelector(
+          ERC20System.transferBypass.selector,
+          from,
+          to,
+          amount
+        )
+      );
     }
 
     function _mint (address account, uint256 amount) internal virtual {
-      token.mint(account, amount);
+      console.log('account:', account);
+      console.log('amount:', amount);
+      world.call(
+        mudId,
+        SYSTEM_NAME,
+        abi.encodeWithSelector(
+          ERC20System.mintBypass.selector,
+          account,
+          amount
+        )
+      );
     }
 
     function _burn (address account, uint256 amount) internal virtual {
-      token.burn(account, amount);
+      world.call(
+        mudId,
+        SYSTEM_NAME,
+        abi.encodeWithSelector(
+          ERC20System.burnBypass.selector,
+          account,
+          amount
+        )
+      );
     }
 
     function _approve (address owner, address spender, uint256 amount) internal virtual {
-      token.approve(owner, spender, amount);
+        world.call(
+        mudId,
+        SYSTEM_NAME,
+        abi.encodeWithSelector(
+          ERC20System.approveBypass.selector,
+          owner,
+          spender,
+          amount
+        )
+      );
     }
 
     function _spendAllowance (address owner, address spender, uint256 amount) internal virtual {
-      token.spendAllowance(owner, spender, amount);
+      world.call(
+        mudId,
+        SYSTEM_NAME,
+        abi.encodeWithSelector(
+          ERC20System.spendAllowanceBypass.selector,
+          owner,
+          spender,
+          amount
+        )
+      );
+
     }
 
     function emitApproval(address owner, address spender, uint256 value) public virtual {
-      require(msg.sender == address(world), "ERC20: Only World can emit approval event");
+      require(msg.sender == address(world) || msg.sender == address(token), "ERC20: Only World or MUD token can emit approval event");
       emit Approval(owner, spender, value);
     }
 
     function emitTransfer(address from, address to, uint256 value) public virtual {
-      require(msg.sender == address(world), "ERC20: Only World can emit transfer event");
-      emit Approval(from, to, value);
+      require(msg.sender == address(world) || msg.sender == address(token), "ERC20: Only World or MUD token can emit transfer event");
+      emit Transfer(from, to, value);
     }
 }

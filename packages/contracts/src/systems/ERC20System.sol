@@ -13,6 +13,7 @@ import { ERC20MUD } from "../proxy/ERC20MUD.sol";
 import { console } from "forge-std/console.sol";
 import {SingletonKey, ERC20, ALLOWANCE, tokenToTable, addressToBytes16} from "../utils.sol";
 
+bytes16 constant SYSTEM_NAME = bytes16('erc20_system');
 
 contract ERC20System is System {
 
@@ -22,49 +23,52 @@ contract ERC20System is System {
      */
     IWorld immutable world;
     address tokenId;
-    bytes32 immutable ERC20Namespace;
-    bytes32 immutable allowanceNamespace;
+    bytes32 immutable ERC20Id;
+    bytes32 immutable allowanceId;
     constructor(IWorld _world, address _tokenId, string memory _name, string memory _symbol) {
       world = _world;
       tokenId = _tokenId;
       bytes16 namespace = addressToBytes16(tokenId);
 
       // register this system
-      bytes16 system = bytes16('ERC20System');
-      world.registerSystem(namespace, bytes16('ERC20System'), this, true);
-      world.registerFunctionSelector(namespace, system, "name", "()");
-      world.registerFunctionSelector(namespace, system, "symbol", "()");
-      world.registerFunctionSelector(namespace, system, "totalSupply", "()");
-      world.registerFunctionSelector(namespace, system, "balanceOf", "(address)");
-      world.registerFunctionSelector(namespace, system, "transfer", "(address, uint256)");
-      world.registerFunctionSelector(namespace, system, "allowance", "(address, address)");
-      world.registerFunctionSelector(namespace, system, "approve", "(address, uint256)");
-      world.registerFunctionSelector(namespace, system, "transferFrom", "(address, address, uint256)");
-      world.registerFunctionSelector(namespace, system, "increaseAllowance", "(address, uint256)");
-      world.registerFunctionSelector(namespace, system, "decreaseAllowance", "(address, uint256)");
+      world.registerSystem(namespace, SYSTEM_NAME, this, true);
+      world.registerFunctionSelector(namespace, SYSTEM_NAME, "name", "()");
+      world.registerFunctionSelector(namespace, SYSTEM_NAME, "symbol", "()");
+      world.registerFunctionSelector(namespace, SYSTEM_NAME, "totalSupply", "()");
+      world.registerFunctionSelector(namespace, SYSTEM_NAME, "balanceOf", "(address)");
+      world.registerFunctionSelector(namespace, SYSTEM_NAME, "transfer", "(address, uint256)");
+      world.registerFunctionSelector(namespace, SYSTEM_NAME, "allowance", "(address, address)");
+      world.registerFunctionSelector(namespace, SYSTEM_NAME, "approve", "(address, uint256)");
+      world.registerFunctionSelector(namespace, SYSTEM_NAME, "transferFrom", "(address, address, uint256)");
+      world.registerFunctionSelector(namespace, SYSTEM_NAME, "increaseAllowance", "(address, uint256)");
+      world.registerFunctionSelector(namespace, SYSTEM_NAME, "decreaseAllowance", "(address, uint256)");
+      world.registerFunctionSelector(namespace, SYSTEM_NAME, "mintBypass", "(address, uint256)");
+      world.registerFunctionSelector(namespace, SYSTEM_NAME, "burnBypass", "(address, uint256)");
+      world.registerFunctionSelector(namespace, SYSTEM_NAME, "transferBypass", "(address, address, uint256)");
+      world.registerFunctionSelector(namespace, SYSTEM_NAME, "approveBypass", "(address, address, uint256)");
+      world.registerFunctionSelector(namespace, SYSTEM_NAME, "spendAllowanceBypass", "(address, address, uint256)");
 
-      world.registerTable(namespace, ERC20, ERC20Table.getSchema(), ERC20Table.getKeySchema());
-      world.registerTable(namespace, ALLOWANCE, AllowanceTable.getSchema(), AllowanceTable.getKeySchema());
+      ERC20Id = world.registerTable(namespace, ERC20, ERC20Table.getSchema(), ERC20Table.getKeySchema());
+      allowanceId = world.registerTable(namespace, ALLOWANCE, AllowanceTable.getSchema(), AllowanceTable.getKeySchema());
 
-      ERC20Namespace =bytes32(abi.encodePacked(namespace, ERC20)); 
-      allowanceNamespace =bytes32(abi.encodePacked(namespace, ALLOWANCE)); 
-      ERC20Table.setName(ERC20Namespace, SingletonKey, _name);
-      ERC20Table.setSymbol(ERC20Namespace, SingletonKey, _symbol);
+      ERC20Table.setName(world, ERC20Id, SingletonKey, _name);
+      ERC20Table.setSymbol(world, allowanceId, SingletonKey, _symbol);
     }
 
     function name() public view virtual returns (string memory) {
-        return ERC20Table.getName(ERC20Namespace, SingletonKey);
+        return ERC20Table.getName(world, ERC20Id, SingletonKey);
     }
+
     function symbol() public view virtual returns (string memory) {
-        return ERC20Table.getSymbol(ERC20Namespace, SingletonKey);
+        return ERC20Table.getSymbol(world, allowanceId, SingletonKey);
     }
   
     function totalSupply() public view  virtual returns (uint256) {
-        return ERC20Table.getTotalSupply(ERC20Namespace, SingletonKey);
+        return ERC20Table.getTotalSupply(world, ERC20Id, SingletonKey);
     }
 
     function balanceOf(address account) public view  virtual returns (uint256) {
-        return ERC20Table.getBalance(ERC20Namespace, account);
+        return ERC20Table.getBalance(world, ERC20Id, account);
     }
 
     function transfer(address to, uint256 amount) public virtual{
@@ -73,7 +77,7 @@ contract ERC20System is System {
     }
 
     function allowance(address owner, address spender) public virtual view returns (uint256) {
-        return AllowanceTable.get(allowanceNamespace, owner, spender);
+        return AllowanceTable.get(world, allowanceId, owner, spender);
     }
     
     function approve(address spender, uint256 amount) public virtual {
@@ -99,27 +103,31 @@ contract ERC20System is System {
         _approve(owner, spender, currentAllowance - subtractedValue);
     }
 
-    function transfer(address from, address to, uint256 amount) virtual public {
+    
+    /***** 
+      The next five functions are only accessible via a direct call from the proxy contract
+     */
+
+    function transferBypass(address from, address to, uint256 amount) virtual public {
       require(_msgSender() == tokenId, "ERC20System: not authorized to transfer");
       _transfer(from, to, amount);
     }
-
-    function mint(address account, uint256 amount) virtual public {
+    function mintBypass(address account, uint256 amount) virtual public {
       require(_msgSender() == tokenId, "ERC20System: not authorized to mint");
       _mint(account, amount);
     }
 
-    function burn(address account, uint256 amount) virtual public {
+    function burnBypass(address account, uint256 amount) virtual public {
       require(_msgSender() == tokenId, "ERC20System: not authorized to burn");
       _burn(account, amount);
     } 
 
-    function approve(address owner, address spender, uint256 amount) public {
+    function approveBypass(address owner, address spender, uint256 amount) public {
       require(_msgSender() == tokenId, "ERC20System: not authorized to approve");
       _approve(owner, spender, amount);
     }
 
-    function spendAllowance(address owner, address spender, uint256 amount) public {
+    function spendAllowanceBypass(address owner, address spender, uint256 amount) public {
       require(_msgSender() == tokenId, "ERC20System: not authorized to spend allowance");
       _spendAllowance(owner, spender, amount);
     }
@@ -128,36 +136,38 @@ contract ERC20System is System {
         require(from != address(0), "ERC20: transfer from the zero address");
         require(to != address(0), "ERC20: transfer to the zero address");
 
-        uint256 fromBalance = ERC20Table.getBalance(ERC20Namespace, from);
-        uint256 toBalance = ERC20Table.getBalance(ERC20Namespace, to);
+        uint256 fromBalance = ERC20Table.getBalance(world, ERC20Id, from);
+        uint256 toBalance = ERC20Table.getBalance(world, ERC20Id, to);
         require(fromBalance >= amount, "ERC20: transfer amount exceeds balance");
-        ERC20Table.setBalance(ERC20Namespace, from, fromBalance - amount);
-        ERC20Table.setBalance(ERC20Namespace, to, toBalance + amount);
+        ERC20Table.setBalance(world, ERC20Id, from, fromBalance - amount);
+        ERC20Table.setBalance(world, ERC20Id, to, toBalance + amount);
 
         IERC20MUD(tokenId).emitTransfer(from, to, amount);
     }
 
     function _mint(address account, uint256 amount) internal {
+      console.log('account:', account);
+      console.log('amount:', amount);
         require(account != address(0), "ERC20: mint to the zero address");
-        uint256 _totalSupply = ERC20Table.getTotalSupply(ERC20Namespace, SingletonKey);
-        uint256 balance = ERC20Table.getBalance(ERC20Namespace, account);
+        uint256 _totalSupply = ERC20Table.getTotalSupply(world, ERC20Id, SingletonKey);
+        uint256 balance = ERC20Table.getBalance(world, ERC20Id, account);
         
-        ERC20Table.setTotalSupply(ERC20Namespace, SingletonKey, _totalSupply + amount);
+        ERC20Table.setTotalSupply(world, ERC20Id, SingletonKey, _totalSupply + amount);
 
-        ERC20Table.setBalance(ERC20Namespace, account, balance + amount);
+        ERC20Table.setBalance(world, ERC20Id, account, balance + amount);
         IERC20MUD(tokenId).emitTransfer(address(0), account, amount);
     }
 
     function _burn(address account, uint256 amount) internal {
         require(account != address(0), "ERC20: burn from the zero address");
 
-        uint256 accountBalance = ERC20Table.getBalance(ERC20Namespace, account);
+        uint256 accountBalance = ERC20Table.getBalance(world, ERC20Id, account);
 
-        uint256 _totalSupply = ERC20Table.getTotalSupply(ERC20Namespace, SingletonKey);
+        uint256 _totalSupply = ERC20Table.getTotalSupply(world, ERC20Id, SingletonKey);
         require(accountBalance >= amount, "ERC20: burn amount exceeds balance");
 
-        ERC20Table.setBalance(ERC20Namespace, account, accountBalance - amount);
-        ERC20Table.setTotalSupply(ERC20Namespace, SingletonKey, _totalSupply - amount);
+        ERC20Table.setBalance(world, ERC20Id, account, accountBalance - amount);
+        ERC20Table.setTotalSupply(world, ERC20Id, SingletonKey, _totalSupply - amount);
 
         IERC20MUD(tokenId).emitTransfer(account, address(0), amount);
     }
@@ -165,7 +175,7 @@ contract ERC20System is System {
     function _approve(address owner, address spender, uint256 amount) internal {
         require(owner != address(0), "ERC20: approve from the zero address");
         require(spender != address(0), "ERC20: approve to the zero address");
-        AllowanceTable.set(allowanceNamespace, owner, spender, amount);
+        AllowanceTable.set(world, allowanceId, owner, spender, amount);
     }
 
     function _spendAllowance(address owner, address spender, uint256 amount) internal {

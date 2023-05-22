@@ -9,8 +9,8 @@ contract ERC20TestTokenProxy is ERC20MUD {
 
   constructor(IWorld worldAddress, string memory _name, string memory _symbol) ERC20MUD (worldAddress, _name, _symbol)
   {
-  }
 
+  }
     function mint(address to, uint256 amount) public virtual {
         _mint(to,amount);
     }
