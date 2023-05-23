@@ -2,19 +2,19 @@
 
 pragma solidity ^0.8.0;
 
-import "./interfaces/IERC20MUD.sol";
+import "../interfaces/IERC20Proxy.sol";
 import { IWorld } from "../../codegen/world/IWorld.sol";
-import { addressToBytes16} from "../../utils.sol";
 import {ERC20System, SYSTEM_NAME } from "./ERC20System.sol";
+import {nameToBytes16} from "../../utils.sol";
 
-contract ERC20MUD is IERC20MUD {
+contract ERC20Proxy is IERC20Proxy {
 
     IWorld private world;
     ERC20System private token;
     bytes16 private mudId;
-    function setup(IWorld _world, ERC20System _token) internal {
+    function setup(IWorld _world, ERC20System _token, string memory _name) internal {
       world =_world;
-      mudId = addressToBytes16(address(this));
+      mudId = nameToBytes16(_name);
       token = _token;
     }
 

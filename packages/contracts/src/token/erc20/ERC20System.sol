@@ -8,22 +8,24 @@ import { IWorld } from "../../codegen/world/IWorld.sol";
 import { AllowanceTable } from "../../codegen/Tables.sol";
 import { MetadataTable } from "../../codegen/Tables.sol";
 import { BalanceTable } from "../../codegen/Tables.sol";
-import { ERC20MUD } from "./ERC20MUD.sol"; 
-import { addressToBytes16} from "../../utils.sol";
+import { ERC20Proxy } from "./ERC20Proxy.sol"; 
+import {nameToBytes16, tokenToTable, Token} from "../../utils.sol";
+import { console } from "forge-std/console.sol";
 
 bytes16 constant SYSTEM_NAME = bytes16('erc20_system');
 
 contract ERC20System is System {
 
     IWorld immutable world;
-    address tokenId;
+    address proxy;
     bytes32 immutable metadataTableId;
     bytes32 immutable balanceTableId;
     bytes32 immutable allowanceTableId;
-    constructor(IWorld _world, address _tokenId, string memory _name, string memory _symbol) {
+    constructor(IWorld _world, address _proxy, string memory _name, string memory _symbol) {
       world = _world;
-      tokenId = _tokenId;
-      bytes16 namespace = addressToBytes16(tokenId);
+      proxy = _proxy;
+      bytes16 namespace = nameToBytes16(_name);
+      console.log('namespace:', uint256(bytes32(namespace)));
       // register this system
       world.registerSystem(namespace, SYSTEM_NAME, this, true);
       world.registerFunctionSelector(namespace, SYSTEM_NAME, "name", "()");
@@ -41,14 +43,18 @@ contract ERC20System is System {
       world.registerFunctionSelector(namespace, SYSTEM_NAME, "transferBypass", "(address, address, uint256)");
       world.registerFunctionSelector(namespace, SYSTEM_NAME, "approveBypass", "(address, address, uint256)");
       world.registerFunctionSelector(namespace, SYSTEM_NAME, "spendAllowanceBypass", "(address, address, uint256)");
-
       // register tables
-      metadataTableId = world.registerTable(namespace, bytes16('metadata'), MetadataTable.getSchema(), MetadataTable.getKeySchema());
+      metadataTableId = world.registerTable(namespace,bytes16('metadata'), MetadataTable.getSchema(), MetadataTable.getKeySchema());
       balanceTableId = world.registerTable(namespace, bytes16('balance'), BalanceTable.getSchema(), BalanceTable.getKeySchema());
       allowanceTableId = world.registerTable(namespace, bytes16('allowance'), AllowanceTable.getSchema(), AllowanceTable.getKeySchema());
 
-      MetadataTable.setName(world, metadataTableId,  _name);
-      MetadataTable.setSymbol(world, metadataTableId,  _symbol);
+      // metadataTableId = tokenToTable('metadata', Token.ERC20);
+      // balanceTableId = tokenToTable('balance', Token.ERC20);
+      // allowanceTableId =tokenToTable('allowance', Token.ERC20);
+ 
+      MetadataTable.setName(world, metadataTableId, _name);
+      MetadataTable.setSymbol(world, metadataTableId, _symbol);
+      MetadataTable.setProxy(world, metadataTableId, proxy);
     }
 
     function name() public view virtual returns (string memory) {
@@ -105,26 +111,26 @@ contract ERC20System is System {
      */
 
     function transferBypass(address from, address to, uint256 amount) virtual public {
-      require(_msgSender() == tokenId, "ERC20System: not authorized to transfer");
+      require(_msgSender() == proxy, "ERC20System: not authorized to transfer");
       _transfer(from, to, amount);
     }
     function mintBypass(address account, uint256 amount) virtual public {
-      require(_msgSender() == tokenId, "ERC20System: not authorized to mint");
+      require(_msgSender() == proxy, "ERC20System: not authorized to mint");
       _mint(account, amount);
     }
 
     function burnBypass(address account, uint256 amount) virtual public {
-      require(_msgSender() == tokenId, "ERC20System: not authorized to burn");
+      require(_msgSender() == proxy, "ERC20System: not authorized to burn");
       _burn(account, amount);
     } 
 
     function approveBypass(address owner, address spender, uint256 amount) public {
-      require(_msgSender() == tokenId, "ERC20System: not authorized to approve");
+      require(_msgSender() == proxy, "ERC20System: not authorized to approve");
       _approve(owner, spender, amount);
     }
 
     function spendAllowanceBypass(address owner, address spender, uint256 amount) public {
-      require(_msgSender() == tokenId, "ERC20System: not authorized to spend allowance");
+      require(_msgSender() == proxy, "ERC20System: not authorized to spend allowance");
       _spendAllowance(owner, spender, amount);
     }
 
@@ -138,7 +144,7 @@ contract ERC20System is System {
         BalanceTable.set(world, balanceTableId, from, fromBalance - amount);
         BalanceTable.set(world, balanceTableId, to, toBalance + amount);
 
-        ERC20MUD(tokenId).emitTransfer(from, to, amount);
+        ERC20Proxy(proxy).emitTransfer(from, to, amount);
     }
 
     function _mint(address account, uint256 amount) internal {
@@ -149,7 +155,7 @@ contract ERC20System is System {
         MetadataTable.setTotalSupply(world, metadataTableId,  _totalSupply + amount);
 
         BalanceTable.set(world, balanceTableId, account, balance + amount);
-        ERC20MUD(tokenId).emitTransfer(address(0), account, amount);
+        ERC20Proxy(proxy).emitTransfer(address(0), account, amount);
     }
 
     function _burn(address account, uint256 amount) internal {
@@ -163,7 +169,7 @@ contract ERC20System is System {
         BalanceTable.set(world, balanceTableId, account, accountBalance - amount);
         MetadataTable.setTotalSupply(world, metadataTableId,  _totalSupply - amount);
 
-        ERC20MUD(tokenId).emitTransfer(account, address(0), amount);
+        ERC20Proxy(proxy).emitTransfer(account, address(0), amount);
     }
     
     function _approve(address owner, address spender, uint256 amount) internal {
@@ -179,6 +185,6 @@ contract ERC20System is System {
             _approve(owner, spender, currentAllowance - amount);
         }
 
-      ERC20MUD(tokenId).emitApproval(owner, spender, amount);
+      ERC20Proxy(proxy).emitApproval(owner, spender, amount);
     }
 }

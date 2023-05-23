@@ -3,12 +3,12 @@ pragma solidity >=0.8.0;
 
 import "forge-std/Test.sol";
 import { MudV2Test } from "@latticexyz/std-contracts/src/test/MudV2Test.t.sol";
-import { ERC20System, SYSTEM_NAME } from "../src/token/internal/ERC20System.sol";
+import { ERC20System, SYSTEM_NAME } from "../src/token/erc20/ERC20System.sol";
 
 import { IWorld } from "../src/codegen/world/IWorld.sol";
-import { ERC20TestTokenProxy } from "../src/token/ERC20TestTokenProxy.sol";
-import {ERC20TestTokenMUD} from "../src/token/ERC20TestTokenMUD.sol";
-import {addressToBytes16} from "../src/utils.sol";
+import { ERC20TestTokenProxy } from "../src/token/erc20/ERC20TestTokenProxy.sol";
+import {ERC20TestTokenMUD} from "../src/token/erc20/ERC20TestTokenMUD.sol";
+import {nameToBytes16} from "../src/utils.sol";
 
 // I took these tests from https://github.com/Atarpara/openzeppeline-erc20-foundry-test
 contract ERC20Test is MudV2Test {
@@ -25,7 +25,7 @@ contract ERC20Test is MudV2Test {
     world = IWorld(worldAddress);
     token = new ERC20TestTokenProxy(world, "GOKU", "GK");
     tokenId = address(token);
-    tableId = addressToBytes16(tokenId);
+    tableId = nameToBytes16("GOKU");
   }
 
   modifier prank(address prankster) {
