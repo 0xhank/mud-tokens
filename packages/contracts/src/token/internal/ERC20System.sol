@@ -4,12 +4,12 @@
 pragma solidity ^0.8.0;
 
 import { System } from "@latticexyz/world/src/System.sol";
-import { IWorld } from "../codegen/world/IWorld.sol";
-import { AllowanceTable } from "../codegen/Tables.sol";
-import { MetadataTable } from "../codegen/Tables.sol";
-import { BalanceTable } from "../codegen/Tables.sol";
-import { IERC20MUD } from "../proxy/interfaces/IERC20MUD.sol"; 
-import { addressToBytes16} from "../utils.sol";
+import { IWorld } from "../../codegen/world/IWorld.sol";
+import { AllowanceTable } from "../../codegen/Tables.sol";
+import { MetadataTable } from "../../codegen/Tables.sol";
+import { BalanceTable } from "../../codegen/Tables.sol";
+import { ERC20MUD } from "./ERC20MUD.sol"; 
+import { addressToBytes16} from "../../utils.sol";
 
 bytes16 constant SYSTEM_NAME = bytes16('erc20_system');
 
@@ -138,7 +138,7 @@ contract ERC20System is System {
         BalanceTable.set(world, balanceTableId, from, fromBalance - amount);
         BalanceTable.set(world, balanceTableId, to, toBalance + amount);
 
-        IERC20MUD(tokenId).emitTransfer(from, to, amount);
+        ERC20MUD(tokenId).emitTransfer(from, to, amount);
     }
 
     function _mint(address account, uint256 amount) internal {
@@ -149,7 +149,7 @@ contract ERC20System is System {
         MetadataTable.setTotalSupply(world, metadataTableId,  _totalSupply + amount);
 
         BalanceTable.set(world, balanceTableId, account, balance + amount);
-        IERC20MUD(tokenId).emitTransfer(address(0), account, amount);
+        ERC20MUD(tokenId).emitTransfer(address(0), account, amount);
     }
 
     function _burn(address account, uint256 amount) internal {
@@ -163,7 +163,7 @@ contract ERC20System is System {
         BalanceTable.set(world, balanceTableId, account, accountBalance - amount);
         MetadataTable.setTotalSupply(world, metadataTableId,  _totalSupply - amount);
 
-        IERC20MUD(tokenId).emitTransfer(account, address(0), amount);
+        ERC20MUD(tokenId).emitTransfer(account, address(0), amount);
     }
     
     function _approve(address owner, address spender, uint256 amount) internal {
@@ -179,6 +179,6 @@ contract ERC20System is System {
             _approve(owner, spender, currentAllowance - amount);
         }
 
-      IERC20MUD(tokenId).emitApproval(owner, spender, amount);
+      ERC20MUD(tokenId).emitApproval(owner, spender, amount);
     }
 }

@@ -4,7 +4,7 @@
 pragma solidity ^0.8.0;
 
 import { IWorld } from "../codegen/world/IWorld.sol";
-import { ERC20System, SYSTEM_NAME } from "./ERC20System.sol";
+import { ERC20System, SYSTEM_NAME } from "./internal/ERC20System.sol";
 import { addressToBytes16} from "../utils.sol";
 
 contract ERC20TestTokenMUD is ERC20System{

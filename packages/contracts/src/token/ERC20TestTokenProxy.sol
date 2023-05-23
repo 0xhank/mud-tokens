@@ -2,9 +2,9 @@
 
 pragma solidity ^0.8.0;
 
-import "./ERC20MUD.sol";
+import "./internal/ERC20MUD.sol";
 import { IWorld } from "../codegen/world/IWorld.sol";
-import {ERC20TestTokenMUD } from "../systems/ERC20TestTokenMUD.sol";
+import {ERC20TestTokenMUD } from "./ERC20TestTokenMUD.sol";
 
 contract ERC20TestTokenProxy is ERC20MUD {
   constructor(IWorld world, string memory _name, string memory _symbol) 

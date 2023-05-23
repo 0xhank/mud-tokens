@@ -3,9 +3,9 @@
 pragma solidity ^0.8.0;
 
 import "./interfaces/IERC20MUD.sol";
-import { IWorld } from "../codegen/world/IWorld.sol";
-import { addressToBytes16} from "../utils.sol";
-import {ERC20System, SYSTEM_NAME } from "../systems/ERC20System.sol";
+import { IWorld } from "../../codegen/world/IWorld.sol";
+import { addressToBytes16} from "../../utils.sol";
+import {ERC20System, SYSTEM_NAME } from "./ERC20System.sol";
 
 contract ERC20MUD is IERC20MUD {
 
