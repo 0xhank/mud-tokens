@@ -9,19 +9,12 @@ import { AllowanceTable } from "../codegen/Tables.sol";
 import { MetadataTable } from "../codegen/Tables.sol";
 import { BalanceTable } from "../codegen/Tables.sol";
 import { IERC20MUD } from "../proxy/interfaces/IERC20MUD.sol"; 
-import { ERC20MUD } from "../proxy/ERC20MUD.sol"; 
-import { console } from "forge-std/console.sol";
 import { addressToBytes16} from "../utils.sol";
-
 
 bytes16 constant SYSTEM_NAME = bytes16('erc20_system');
 
 contract ERC20System is System {
 
-    /**
-     * @dev Sets the values for {name} and {symbol}.
-     * These values are immutable: they can only be set once (ideally during postDeploy script) 
-     */
     IWorld immutable world;
     address tokenId;
     bytes32 immutable metadataTableId;
@@ -149,8 +142,6 @@ contract ERC20System is System {
     }
 
     function _mint(address account, uint256 amount) internal {
-      console.log('account:', account);
-      console.log('amount:', amount);
         require(account != address(0), "ERC20: mint to the zero address");
         uint256 _totalSupply = MetadataTable.getTotalSupply(world, metadataTableId);
         uint256 balance = BalanceTable.get(world, balanceTableId, account);

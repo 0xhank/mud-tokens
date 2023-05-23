@@ -7,12 +7,10 @@ import { IWorld } from "../codegen/world/IWorld.sol";
 import {ERC20TestTokenMUD } from "../systems/ERC20TestTokenMUD.sol";
 
 contract ERC20TestTokenProxy is ERC20MUD {
-
-  ERC20TestTokenMUD token;
   constructor(IWorld world, string memory _name, string memory _symbol) 
   {
-    token = new ERC20TestTokenMUD(world, address(this), _name, _symbol);
-    setup(world, token);
+    ERC20TestTokenMUD token = new ERC20TestTokenMUD(world, address(this), _name, _symbol);
+    super.setup(world, token);
   }
     function mint(address to, uint256 amount) public virtual {
         _mint(to,amount);
