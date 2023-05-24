@@ -10,7 +10,6 @@ import { MetadataTable } from "../../codegen/Tables.sol";
 import { BalanceTable } from "../../codegen/Tables.sol";
 import { ERC20Proxy } from "./ERC20Proxy.sol"; 
 import {nameToBytes16, tokenToTable, Token} from "../../utils.sol";
-import { console } from "forge-std/console.sol";
 
 bytes16 constant SYSTEM_NAME = bytes16('erc20_system');
 
@@ -25,7 +24,6 @@ contract ERC20System is System {
       world = _world;
       proxy = _proxy;
       bytes16 namespace = nameToBytes16(_name);
-      console.log('namespace:', uint256(bytes32(namespace)));
       // register this system
       world.registerSystem(namespace, SYSTEM_NAME, this, true);
       world.registerFunctionSelector(namespace, SYSTEM_NAME, "name", "()");

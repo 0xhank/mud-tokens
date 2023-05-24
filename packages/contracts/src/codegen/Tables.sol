@@ -6,3 +6,4 @@ pragma solidity >=0.8.0;
 import { MetadataTable, MetadataTableData } from "./tables/MetadataTable.sol";
 import { BalanceTable } from "./tables/BalanceTable.sol";
 import { AllowanceTable } from "./tables/AllowanceTable.sol";
+import { ERC721Table, ERC721TableData } from "./tables/ERC721Table.sol";

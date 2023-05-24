@@ -33,6 +33,7 @@ export default mudConfig({
       schema: {
         owner: "address",
         tokenApproval: "address",
+        uri: "string",
       },
     },
   },
