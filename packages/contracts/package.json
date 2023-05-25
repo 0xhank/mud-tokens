@@ -18,12 +18,14 @@
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/bytes": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
-    "@latticexyz/cli": "2.0.0-alpha.1.137+b3dea005",
-    "@latticexyz/schema-type": "2.0.0-alpha.1.137+b3dea005",
-    "@latticexyz/std-contracts": "2.0.0-alpha.1.137+b3dea005",
-    "@latticexyz/store": "2.0.0-alpha.1.137+b3dea005",
-    "@latticexyz/world": "2.0.0-alpha.1.137+b3dea005",
-    "ethers": "^5.7.2"
+    "@latticexyz/cli": "2.0.0-alpha.1.197",
+    "@latticexyz/config": "2.0.0-alpha.1.197",
+    "@latticexyz/schema-type": "2.0.0-alpha.1.197",
+    "@latticexyz/std-contracts": "2.0.0-alpha.1.197",
+    "@latticexyz/store": "2.0.0-alpha.1.197",
+    "@latticexyz/world": "2.0.0-alpha.1.197",
+    "ethers": "^5.7.2",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@typechain/ethers-v5": "^10.2.0",
