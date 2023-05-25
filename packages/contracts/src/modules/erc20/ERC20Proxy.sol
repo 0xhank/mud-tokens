@@ -14,25 +14,23 @@ import {BALANCE_TABLE_NAME, METADATA_TABLE_NAME, ALLOWANCE_TABLE_NAME} from "../
 contract ERC20Proxy is IERC20Proxy {
 
     IBaseWorld private world;
-    ERC20System private token;
     bytes32 immutable balanceTableId;
     bytes32 immutable metadataTableId;
     bytes32 immutable allowanceTableId;
 
-    constructor (IBaseWorld _world, ERC20System _token, string memory _name) {
+    constructor (IBaseWorld _world, string memory _name) {
       world =_world;
-      token = _token;
       balanceTableId = tokenToTable(_name, BALANCE_TABLE_NAME);
       metadataTableId = tokenToTable(_name, METADATA_TABLE_NAME);
       allowanceTableId = tokenToTable(_name, ALLOWANCE_TABLE_NAME);
     }
 
     function name() public view virtual override returns (string memory){
-      return token.name();
+      return MetadataTable.getName(world, metadataTableId);
     }
 
     function symbol() public view virtual override returns (string memory){
-      return token.symbol();
+      return MetadataTable.getSymbol(world, metadataTableId);
     }
 
     function decimals() public view virtual override returns (uint8){
@@ -40,11 +38,11 @@ contract ERC20Proxy is IERC20Proxy {
     }
 
     function totalSupply() public view virtual override returns (uint256){
-      return token.totalSupply();
+      return MetadataTable.getTotalSupply(world, metadataTableId);
     }
 
     function balanceOf(address account) public view virtual override returns (uint256){
-      return token.balanceOf(account);
+      return BalanceTable.get(world, balanceTableId, account);
     }
 
     function transfer(address to, uint256 amount) public virtual override returns (bool){
@@ -53,7 +51,7 @@ contract ERC20Proxy is IERC20Proxy {
     }
 
     function allowance(address owner, address spender) public view virtual override returns (uint256){
-      return token.allowance(owner, spender);
+      return AllowanceTable.get(world, allowanceTableId, owner, spender);
     }
 
     function approve(address spender, uint256 amount) public virtual override returns (bool){
@@ -139,12 +137,12 @@ contract ERC20Proxy is IERC20Proxy {
     }
 
     function emitApproval(address owner, address spender, uint256 value) public virtual {
-      require(msg.sender == address(world) || msg.sender == address(token), "ERC20: Only World or MUD token can emit approval event");
+      require(msg.sender == address(world), "ERC20: Only World or MUD token can emit approval event");
       emit Approval(owner, spender, value);
     }
 
     function emitTransfer(address from, address to, uint256 value) public virtual {
-      require(msg.sender == address(world) || msg.sender == address(token), "ERC20: Only World or MUD token can emit transfer event");
+      require(msg.sender == address(world), "ERC20: Only World or MUD token can emit transfer event");
       emit Transfer(from, to, value);
     }
 }

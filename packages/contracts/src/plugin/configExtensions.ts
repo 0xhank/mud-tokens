@@ -19,15 +19,9 @@ extendMUDCoreConfig((config) => {
     ],
   }));
 
-  modifiedConfig.modules = [
-    ...worldConfig.modules,
-    {
-      name: "SnapSyncModule",
-      root: true,
-      args: [],
-    },
-    ...newModules,
-  ];
+  modifiedConfig.modules = [...worldConfig.modules, ...newModules];
+
+  console.log("new config:", modifiedConfig);
 
   return modifiedConfig;
 });

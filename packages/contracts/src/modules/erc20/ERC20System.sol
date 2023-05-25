@@ -11,7 +11,9 @@ import { MetadataTable } from "../common/MetadataTable.sol";
 
 import { ERC20Proxy } from "./ERC20Proxy.sol"; 
 import {nameToBytes16, tokenToTable, Token} from "../common/utils.sol";
+import {METADATA_TABLE_NAME, BALANCE_TABLE_NAME, ALLOWANCE_TABLE_NAME} from "../common/constants.sol";
 import '@latticexyz/world/src/ResourceSelector.sol';
+import { console } from "forge-std/console.sol";
 
 
 contract ERC20System is System {
@@ -19,29 +21,11 @@ contract ERC20System is System {
     bytes32 immutable private metadataTableId;
     bytes32 immutable balanceTableId;
     bytes32 immutable allowanceTableId;
-    constructor(string memory _name, string memory _symbol) {
-      bytes16 namespace = nameToBytes16(_name);
-      // register this system
-      // world.registerSystem(namespace, SYSTEM_NAME, this, true);
-      // world.registerFunctionSelector(namespace, SYSTEM_NAME, "name", "()");
-      // world.registerFunctionSelector(namespace, SYSTEM_NAME, "symbol", "()");
-      // world.registerFunctionSelector(namespace, SYSTEM_NAME, "totalSupply", "()");
-      // world.registerFunctionSelector(namespace, SYSTEM_NAME, "balanceOf", "(address)");
-      // world.registerFunctionSelector(namespace, SYSTEM_NAME, "transfer", "(address, uint256)");
-      // world.registerFunctionSelector(namespace, SYSTEM_NAME, "allowance", "(address, address)");
-      // world.registerFunctionSelector(namespace, SYSTEM_NAME, "approve", "(address, uint256)");
-      // world.registerFunctionSelector(namespace, SYSTEM_NAME, "transferFrom", "(address, address, uint256)");
-      // world.registerFunctionSelector(namespace, SYSTEM_NAME, "increaseAllowance", "(address, uint256)");
-      // world.registerFunctionSelector(namespace, SYSTEM_NAME, "decreaseAllowance", "(address, uint256)");
-      // world.registerFunctionSelector(namespace, SYSTEM_NAME, "mintBypass", "(address, uint256)");
-      // world.registerFunctionSelector(namespace, SYSTEM_NAME, "burnBypass", "(address, uint256)");
-      // world.registerFunctionSelector(namespace, SYSTEM_NAME, "transferBypass", "(address, address, uint256)");
-      // world.registerFunctionSelector(namespace, SYSTEM_NAME, "approveBypass", "(address, address, uint256)");
-      // world.registerFunctionSelector(namespace, SYSTEM_NAME, "spendAllowanceBypass", "(address, address, uint256)");
-
-      metadataTableId = ResourceSelector.from(namespace, bytes16('metadata'));
-      balanceTableId = ResourceSelector.from(namespace, bytes16('balance'));
-      allowanceTableId = ResourceSelector.from(namespace, bytes16('allowance'));
+    constructor(string memory namespaceString) {
+      bytes16 namespace = nameToBytes16(namespaceString);
+      metadataTableId = ResourceSelector.from(namespace, METADATA_TABLE_NAME);
+      balanceTableId = ResourceSelector.from(namespace, BALANCE_TABLE_NAME);
+      allowanceTableId = ResourceSelector.from(namespace, ALLOWANCE_TABLE_NAME);
     }
 
     function name() public view virtual returns (string memory) {
@@ -50,6 +34,11 @@ contract ERC20System is System {
 
     function symbol() public view virtual returns (string memory) {
         return MetadataTable.getSymbol(metadataTableId);
+    }
+
+    function proxy() public view virtual returns (address){
+      console.log('proxy: ', uint256(metadataTableId));
+      return MetadataTable.getProxy(metadataTableId);
     }
   
     function totalSupply() public view  virtual returns (uint256) {
@@ -102,7 +91,7 @@ contract ERC20System is System {
         BalanceTable.set(balanceTableId, from, fromBalance - amount);
         BalanceTable.set(balanceTableId, to, toBalance + amount);
 
-        // ERC20Proxy(proxy).emitTransfer(from, to, amount);
+        ERC20Proxy(proxy()).emitTransfer(from, to, amount);
     }
 
     function _mint(address account, uint256 amount) internal {
@@ -113,7 +102,7 @@ contract ERC20System is System {
         MetadataTable.setTotalSupply(metadataTableId,  _totalSupply + amount);
 
         BalanceTable.set(balanceTableId, account, balance + amount);
-        // ERC20Proxy(proxy).emitTransfer(address(0), account, amount);
+        ERC20Proxy(proxy()).emitTransfer(address(0), account, amount);
     }
 
     function _burn(address account, uint256 amount) internal {
@@ -127,7 +116,7 @@ contract ERC20System is System {
         BalanceTable.set(balanceTableId, account, accountBalance - amount);
         MetadataTable.setTotalSupply(metadataTableId,  _totalSupply - amount);
 
-        // ERC20Proxy(proxy).emitTransfer(account, address(0), amount);
+        ERC20Proxy(proxy()).emitTransfer(account, address(0), amount);
     }
     
     function _approve(address owner, address spender, uint256 amount) internal {
@@ -143,6 +132,6 @@ contract ERC20System is System {
             _approve(owner, spender, currentAllowance - amount);
         }
 
-      // ERC20Proxy(proxy).emitApproval(owner, spender, amount);
+      ERC20Proxy(proxy()).emitApproval(owner, spender, amount);
     }
 }

@@ -2,13 +2,14 @@ import { mudConfig } from "@latticexyz/world/register";
 
 export default mudConfig({
   excludeSystems: ["ERC20System", "ERC721System"],
-  tokens: [{ name: "HenryToken", symbol: "HEN", type: "ERC20" }],
+  tokens: [{ name: "ERC20Test", symbol: "ERC", type: "ERC20" }],
   tables: {
     MetadataTable: {
       keySchema: {},
       tableIdArgument: true,
       schema: {
         totalSupply: "uint256",
+        proxy: "address",
         name: "string",
         symbol: "string",
       },
@@ -37,4 +38,20 @@ export default mudConfig({
       },
     },
   },
+  systems: {
+    ERC20TestSystem: {
+      name: "ERC20Test",
+      openAccess: true,
+    },
+  },
+  modules: [
+    {
+      name: "ERC20Module",
+      root: false,
+      args: [
+        { value: "ERC20Test", type: "string" },
+        { value: "ERC", type: "string" },
+      ],
+    },
+  ],
 });

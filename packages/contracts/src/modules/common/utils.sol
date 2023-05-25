@@ -4,15 +4,17 @@ pragma solidity ^0.8.0;
 import {ERC20_SYSTEM_NAME} from "./constants.sol";
 // import {SYSTEM_NAME as ERC721_SYSTEM} from "./internal/ERC721System.sol";
 import "@latticexyz/world/src/ResourceSelector.sol";
+import { console } from "forge-std/console.sol";
 
 enum Token {
   ERC20,
   ERC721
 }
 
-function nameToBytes16(string memory name) pure returns (bytes16){
-  return bytes16(keccak256(abi.encodePacked(name)));
+function nameToBytes16(string memory name) pure returns (bytes16 ret){
+  ret = bytes16(bytes32(bytes(name)));
 }
+
 function tokenToTable(string memory _name, bytes16 token) pure returns (bytes32){
   bytes16 namespace = nameToBytes16(_name);
   return ResourceSelector.from(namespace, token);
