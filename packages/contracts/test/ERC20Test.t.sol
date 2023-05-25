@@ -86,280 +86,184 @@ contract ERC20Test is MudV2Test {
 
     /* CALLING FROM WORLD */
 
-    // function balance(address account) public returns (uint256 bal) {
-    //   bytes memory rawBalance = world.call(
-    //     namespace,
-    //     ERC20_SYSTEM_NAME,
-    //     abi.encodeWithSelector(
-    //       ERC20System.balanceOf.selector,
-    //      account 
-    //     )
-    //   );
-    //   return abi.decode(rawBalance, (uint256));
-    // }
+    function balance(address account) public returns (uint256 bal) {
+      bytes memory rawBalance = world.call(
+        namespace,
+        ERC20_SYSTEM_NAME,
+        abi.encodeWithSelector(
+          ERC20System.balanceOf.selector,
+         account 
+        )
+      );
+      return abi.decode(rawBalance, (uint256));
+    }
 
-    // function allowance(address owner, address spender) public returns (uint256 bal) {
-    //   bytes memory rawBalance = world.call(
-    //     namespace,
-    //     ERC20_SYSTEM_NAME,
-    //     abi.encodeWithSelector(
-    //       ERC20System.allowance.selector,
-    //       owner, spender
-    //     )
-    //   );
-    //   return abi.decode(rawBalance, (uint256));
-    // }
+    function allowance(address owner, address spender) public returns (uint256 bal) {
+      bytes memory rawBalance = world.call(
+        namespace,
+        ERC20_SYSTEM_NAME,
+        abi.encodeWithSelector(
+          ERC20System.allowance.selector,
+          owner, spender
+        )
+      );
+      return abi.decode(rawBalance, (uint256));
+    }
 
-    // function testNameWorld() external {
-    //   bytes memory rawName = world.call(
-    //     namespace, ERC20_SYSTEM_NAME,
-    //     abi.encodeWithSelector(ERC20System.name.selector)
-    //   );
-    //   string memory name = abi.decode(rawName, (string));
-    //   assertEq("GOKU", name);
-    // }
+    function testNameWorld() external {
+      bytes memory rawName = world.call(
+        namespace, ERC20_SYSTEM_NAME,
+        abi.encodeWithSelector(ERC20System.name.selector)
+      );
+      string memory name = abi.decode(rawName, (string));
+      assertEq("ERC20Test", name);
+    }
     
 
-    // function testSymbolWorld() external {
-    // bytes memory rawSymbol = world.call(
-    //     namespace, ERC20_SYSTEM_NAME,
-    //     abi.encodeWithSelector(ERC20System.symbol.selector)
-    //   );
-    //   string memory symbol= abi.decode(rawSymbol, (string));
-    //     assertEq("GK", symbol);
-    // }
+    function testSymbolWorld() external {
+    bytes memory rawSymbol = world.call(
+        namespace, ERC20_SYSTEM_NAME,
+        abi.encodeWithSelector(ERC20System.symbol.selector)
+      );
+      string memory symbol= abi.decode(rawSymbol, (string));
+        assertEq("ERC", symbol);
+    }
 
-    // function testMintWorld() public {
-    //   world.call(
-    //     namespace,
-    //     ERC20_SYSTEM_NAME,
-    //     abi.encodeWithSelector(
-    //       ERC20TestSystem.mint.selector,
-    //       alice,
-    //      2e18 
-    //     )
-    //   );
+    function testMintWorld() public {
+      world.call(
+        namespace,
+        ERC20_SYSTEM_NAME,
+        abi.encodeWithSelector(
+          ERC20TestSystem.mint.selector,
+          alice,
+         2e18 
+        )
+      );
 
-    //     assertEq(token.totalSupply(), token.balanceOf(alice));
-    // }
+        assertEq(token.totalSupply(), token.balanceOf(alice));
+    }
 
-    // function testBurnWorld() public {
-    // world.call(
-    //     namespace,
-    //     ERC20_SYSTEM_NAME,
-    //     abi.encodeWithSelector(
-    //       ERC20TestSystem.mint.selector,
-    //       alice,
-    //      10e18 
-    //     )
-    //   );
+    function testBurnWorld() public {
+    world.call(
+        namespace,
+        ERC20_SYSTEM_NAME,
+        abi.encodeWithSelector(
+          ERC20TestSystem.mint.selector,
+          alice,
+         10e18 
+        )
+      );
 
   
-    //  assertEq(balance(alice), 10e18);
+     assertEq(balance(alice), 10e18);
 
-    //  world.call(
-    //     namespace,
-    //     ERC20_SYSTEM_NAME,
-    //     abi.encodeWithSelector(
-    //       ERC20TestSystem.burn.selector,
-    //       alice,
-    //      8e18 
-    //     )
-    //   );   
+     world.call(
+        namespace,
+        ERC20_SYSTEM_NAME,
+        abi.encodeWithSelector(
+          ERC20TestSystem.burn.selector,
+          alice,
+         8e18 
+        )
+      );   
 
-    //   bytes memory totalSupply = world.call(
-    //     namespace,
-    //     ERC20_SYSTEM_NAME,
-    //     abi.encodeWithSelector(
-    //       ERC20System.totalSupply.selector
-    //     )
-    //   );
+      bytes memory totalSupply = world.call(
+        namespace,
+        ERC20_SYSTEM_NAME,
+        abi.encodeWithSelector(
+          ERC20System.totalSupply.selector
+        )
+      );
 
-    //   assertEq(abi.decode(totalSupply, (uint256)), 2e18);
+      assertEq(abi.decode(totalSupply, (uint256)), 2e18);
 
-    //  assertEq(balance(alice),2e18);
-    // }
+     assertEq(balance(alice),2e18);
+    }
 
-    // function testApproveWorld() public {
-    //   world.call(
-    //     namespace,
-    //     ERC20_SYSTEM_NAME,
-    //     abi.encodeWithSelector(
-    //       ERC20System.approve.selector,
-    //       alice,
-    //       1e18
-    //     )
-    //   );
+    function testApproveWorld() public {
+      world.call(
+        namespace,
+        ERC20_SYSTEM_NAME,
+        abi.encodeWithSelector(
+          ERC20System.approve.selector,
+          alice,
+          1e18
+        )
+      );
 
-    //     assertEq(allowance(address(this), alice), 1e18);
-    // }
+        assertEq(allowance(address(this), alice), 1e18);
+    }
 
-    // function testIncreaseAllowanceWorld() external {
-    //   world.call(
-    //     namespace,
-    //     ERC20_SYSTEM_NAME,
-    //     abi.encodeWithSelector(
-    //       ERC20System.increaseAllowance.selector,
-    //       alice,
-    //       2e18
-    //     )
-    //   );
+    function testIncreaseAllowanceWorld() external {
+      world.call(
+        namespace,
+        ERC20_SYSTEM_NAME,
+        abi.encodeWithSelector(
+          ERC20System.increaseAllowance.selector,
+          alice,
+          2e18
+        )
+      );
 
-    //     assertEq(allowance(address(this), alice), 2e18);
-    // }
+        assertEq(allowance(address(this), alice), 2e18);
+    }
 
-    // function testDecreaseAllowanceWorld() external {
-    //     testApprove();
-    //   world.call(
-    //     namespace,
-    //     ERC20_SYSTEM_NAME,
-    //     abi.encodeWithSelector(
-    //       ERC20System.decreaseAllowance.selector,
-    //       alice,
-    //       0.5e18
-    //     )
-    //   );
+    function testDecreaseAllowanceWorld() external {
+        testApprove();
+      world.call(
+        namespace,
+        ERC20_SYSTEM_NAME,
+        abi.encodeWithSelector(
+          ERC20System.decreaseAllowance.selector,
+          alice,
+          0.5e18
+        )
+      );
 
-    //     assertEq(allowance(address(this), alice), 0.5e18);
-    // }
+        assertEq(allowance(address(this), alice), 0.5e18);
+    }
 
-    // function testTransferWorld() external {
-    //     testMintWorld();
-    //     vm.startPrank(alice);
-    //   world.call(
-    //     namespace,
-    //     ERC20_SYSTEM_NAME,
-    //     abi.encodeWithSelector(
-    //       ERC20System.transfer.selector,
-    //       bob,
-    //       0.5e18
-    //     )
-    //   );
-    //     assertEq(balance(bob), 0.5e18);
-    //     assertEq(balance(alice), 1.5e18);
-    //     vm.stopPrank();
-    // }
+    function testTransferWorld() external {
+        testMintWorld();
+        vm.startPrank(alice);
+      world.call(
+        namespace,
+        ERC20_SYSTEM_NAME,
+        abi.encodeWithSelector(
+          ERC20System.transfer.selector,
+          bob,
+          0.5e18
+        )
+      );
+        assertEq(balance(bob), 0.5e18);
+        assertEq(balance(alice), 1.5e18);
+        vm.stopPrank();
+    }
 
-    // function testTransferFromWorld() external {
-    //     testMintWorld();
-    //     vm.prank(alice);
-    //   world.call(
-    //     namespace,
-    //     ERC20_SYSTEM_NAME,
-    //     abi.encodeWithSelector(
-    //       ERC20System.approve.selector,
-    //       address(this),
-    //       1e18
-    //     )
-    //   );
-    //   world.call(
-    //     namespace,
-    //     ERC20_SYSTEM_NAME,
-    //     abi.encodeWithSelector(
-    //       ERC20System.transferFrom.selector,
-    //       alice,
-    //       bob,
-    //       0.7e18
-    //     )
-    //   );
-    //     assertEq(allowance(alice, address(this)), 1e18 - 0.7e18);
-    //     assertEq(balance(alice), 2e18 - 0.7e18);
-    //     assertEq(balance( bob), 0.7e18);
-    // }
-
-    // /*****************************/
-    // /*      Fuzz Testing         */
-    // /*****************************/
-
-    // function testFuzzMint(address to, uint256 amount) external {
-    //     vm.assume(to != address(0));
-    //     token.mint(to,amount);
-    //     assertEq(token.totalSupply(), token.balanceOf(to));
-    // }
-
-    // function testFuzzBurn(address from, uint256 mintAmount, uint256 burnAmount) external {
-    //     vm.assume(from != address(0));              // from address must not zero
-    //     burnAmount = bound(burnAmount, 0, mintAmount);    // if burnAmount > mintAmount then bound burnAmount to 0 to mintAmount
-    //     token.mint(from , mintAmount);
-    //     token.burn(from, burnAmount);
-    //     assertEq(token.totalSupply() , mintAmount - burnAmount);
-    //     assertEq(token.balanceOf(from), mintAmount - burnAmount);
-    // }
-
-    // function testFuzzApprove(address to, uint256 amount) external {
-    //     vm.assume(to != address(0));
-    //     token.approve(to,amount);
-    //     assertEq(token.allowance(address(this),to), amount);
-    // }
-
-    // function testFuzzTransfer(address to, uint256 amount) external {
-    //     vm.assume(to != address(0));
-    //     vm.assume(to != address(this));
-    //     token.mint(address(this), amount);
-        
-    //     token.transfer(to,amount);
-    //     assertEq(token.balanceOf(address(this)), 0);
-    //     assertEq(token.balanceOf(to), amount);
-    // }
-
-    // function testFuzzTransferFrom(address from, address to,uint256 approval, uint256 amount) external {
-    //     vm.assume(from != address(0));
-    //     vm.assume(to != address(0));
-
-    //     amount = bound(amount, 0, approval);
-    //     token.mint(from, amount);
-
-    //     vm.prank(from);
-    //     token.approve(address(this), approval);
-
-    //     token.transferFrom(from, to, amount);
-    //     assertEq(token.totalSupply(), amount);
-
-    //     if (approval == type(uint256).max){
-    //         assertEq(token.allowance(from, address(this)), approval);
-    //     }
-    //     else {
-    //         assertEq(token.allowance(from,address(this)), approval - amount);
-    //     }
-
-    //     if (from == to) {
-    //         assertEq(token.balanceOf(from), amount);
-    //     } else {
-    //         assertEq(token.balanceOf(from), 0);
-    //         assertEq(token.balanceOf(to), amount);
-    //     }
-    // }
-
-    // function testFailFuzzBurnInsufficientBalance(address to, uint256 mintAmount, uint256 burnAmount) external {
-    //     burnAmount = bound(burnAmount, mintAmount+1, type(uint256).max);
-
-    //     token.mint(to, mintAmount);
-    //     token.burn(to, burnAmount);
-    // }
-
-    // function testFailTransferInsufficientBalance(address to, uint256 mintAmount, uint256 sendAmount) external {
-    //     sendAmount = bound(sendAmount, mintAmount + 1, type(uint256).max);
-
-    //     token.mint(address(this), mintAmount);
-    //     token.transfer(to, sendAmount);
-    // }
-
-    // function testFailFuzzTransferFromInsufficientApprove(address from, address to,uint256 approval, uint256 amount) external {
-    //     amount = bound(amount, approval+1, type(uint256).max);
-
-    //     token.mint(from, amount);
-    //     vm.prank(from);
-    //     token.approve(address(this), approval);
-    //     token.transferFrom(from, to, amount);
-    // }
-
-    // function testFailFuzzTransferFromInsufficientBalance(address from, address to, uint256 mintAmount, uint256 sentAmount) external {
-    //     sentAmount = bound(sentAmount, mintAmount+1, type(uint256).max);
-
-    //     token.mint(from, mintAmount);
-    //     vm.prank(from);
-    //     token.approve(address(this), type(uint256).max);
-
-    //     token.transferFrom(from, to, sentAmount);
-    // }
+    function testTransferFromWorld() external {
+        testMintWorld();
+        vm.prank(alice);
+      world.call(
+        namespace,
+        ERC20_SYSTEM_NAME,
+        abi.encodeWithSelector(
+          ERC20System.approve.selector,
+          address(this),
+          1e18
+        )
+      );
+      world.call(
+        namespace,
+        ERC20_SYSTEM_NAME,
+        abi.encodeWithSelector(
+          ERC20System.transferFrom.selector,
+          alice,
+          bob,
+          0.7e18
+        )
+      );
+        assertEq(allowance(alice, address(this)), 1e18 - 0.7e18);
+        assertEq(balance(alice), 2e18 - 0.7e18);
+        assertEq(balance( bob), 0.7e18);
+    }
 }
