@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {SYSTEM_NAME as ERC20_SYSTEM} from "./token/erc20/ERC20System.sol";
-import {SYSTEM_NAME as ERC721_SYSTEM} from "./token/erc721/ERC721System.sol";
+import {SYSTEM_NAME as ERC20_SYSTEM} from "./internal/ERC20System.sol";
+// import {SYSTEM_NAME as ERC721_SYSTEM} from "./internal/ERC721System.sol";
 import "@latticexyz/world/src/ResourceSelector.sol";
 
 enum Token {
@@ -17,7 +17,7 @@ function tokenToTable(string memory _name, Token token) pure returns (bytes32){
   bytes16 namespace = nameToBytes16(_name);
   bytes16 name;
   if(token == Token.ERC20) name = ERC20_SYSTEM;
-  if(token == Token.ERC721) name = ERC721_SYSTEM;
+  // if(token == Token.ERC721) name = ERC721_SYSTEM;
   return ResourceSelector.from(namespace, name);
 }
 

@@ -3,17 +3,17 @@ pragma solidity >=0.8.0;
 
 import "forge-std/Test.sol";
 import { MudV2Test } from "@latticexyz/std-contracts/src/test/MudV2Test.t.sol";
-import { ERC20System, SYSTEM_NAME } from "../src/token/erc20/ERC20System.sol";
+// import { ERC20System, SYSTEM_NAME } from "../src/token/erc20/ERC20System.sol";
 
 import { IWorld } from "../src/codegen/world/IWorld.sol";
 import { ERC20TestTokenProxy } from "../src/token/erc20/ERC20TestTokenProxy.sol";
-import {ERC20TestTokenMUD} from "../src/token/erc20/ERC20TestTokenMUD.sol";
-import {nameToBytes16} from "../src/utils.sol";
+import {ERC20TestSystem} from "../src/token/erc20/ERC20TestSystem.sol";
+// import {nameToBytes16} from "../src/utils.sol";
 
 // I took these tests from https://github.com/Atarpara/openzeppeline-erc20-foundry-test
 contract ERC20Test is MudV2Test {
   IWorld public world;
-  ERC20TestTokenProxy public token;
+  ERC20TestSystem public token;
   address public alice = address(uint160(0x69));
   address public bob = address(uint160(0x420));
   address public tokenId;
@@ -23,7 +23,7 @@ contract ERC20Test is MudV2Test {
   function setUp() public override {
     super.setUp();
     world = IWorld(worldAddress);
-    token = new ERC20TestTokenProxy(world, "GOKU", "GK");
+    // token = new ERC20TestTokenProxy(world, "GOKU", "GK");
     tokenId = address(token);
     tableId = nameToBytes16("GOKU");
   }
@@ -207,7 +207,7 @@ contract ERC20Test is MudV2Test {
         tableId,
         SYSTEM_NAME,
         abi.encodeWithSelector(
-          ERC20TestTokenMUD.mint.selector,
+          ERC20TestSystem.mint.selector,
           alice,
          2e18 
         )
@@ -221,7 +221,7 @@ contract ERC20Test is MudV2Test {
         tableId,
         SYSTEM_NAME,
         abi.encodeWithSelector(
-          ERC20TestTokenMUD.mint.selector,
+          ERC20TestSystem.mint.selector,
           alice,
          10e18 
         )
@@ -234,7 +234,7 @@ contract ERC20Test is MudV2Test {
         tableId,
         SYSTEM_NAME,
         abi.encodeWithSelector(
-          ERC20TestTokenMUD.burn.selector,
+          ERC20TestSystem.burn.selector,
           alice,
          8e18 
         )

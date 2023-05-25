@@ -3,12 +3,10 @@
 pragma solidity ^0.8.0;
 
 import "../interfaces/IERC20Proxy.sol";
-import { IWorld } from "../../codegen/world/IWorld.sol";
+import { IBaseWorld } from "@latticexyz/world/src/interfaces/IBaseWorld.sol";
 import {ERC20System, SYSTEM_NAME } from "./ERC20System.sol";
-import { BalanceTable } from "../../codegen/Tables.sol";
-import { AllowanceTable } from "../../codegen/Tables.sol";
-import { MetadataTable } from "../../codegen/Tables.sol";
-import {tokenToTable, Token} from "../../utils.sol";
+import { BalanceTable, AllowanceTable, MetadataTable } from "../tables/Tables.sol";
+import {tokenToTable, Token} from "../utils.sol";
 
 contract ERC20Proxy is IERC20Proxy {
 
