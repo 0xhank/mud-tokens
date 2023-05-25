@@ -3,12 +3,11 @@ pragma solidity >=0.8.0;
 
 import "forge-std/Test.sol";
 import { MudV2Test } from "@latticexyz/std-contracts/src/test/MudV2Test.t.sol";
-// import { ERC20System, SYSTEM_NAME } from "../src/token/erc20/ERC20System.sol";
-
+import { ERC20System } from "../modules/erc20/ERC20System.sol";
+import {ERC20_SYSTEM_NAME} from "../modules/common/constants.sol";
 import { IWorld } from "../src/codegen/world/IWorld.sol";
-import { ERC20TestTokenProxy } from "../src/token/erc20/ERC20TestTokenProxy.sol";
-import {ERC20TestSystem} from "../src/token/erc20/ERC20TestSystem.sol";
-// import {nameToBytes16} from "../src/utils.sol";
+import {ERC20TestSystem} from "../src/ERC20TestSystem.sol";
+import {nameToBytes16} from "../modules/common/utils.sol";
 
 // I took these tests from https://github.com/Atarpara/openzeppeline-erc20-foundry-test
 contract ERC20Test is MudV2Test {
@@ -65,19 +64,19 @@ contract ERC20Test is MudV2Test {
         assertEq(token.balanceOf(alice),2e18);
     }
     function testApprove() public {
-        assertTrue(token.approve(alice, 1e18));
+        token.approve(alice, 1e18);
         assertEq(token.allowance(address(this),alice), 1e18);
     }
 
     function testIncreaseAllowance() external {
         assertEq(token.allowance(address(this), alice), 0);
-        assertTrue(token.increaseAllowance(alice , 2e18));
+        token.increaseAllowance(alice , 2e18);
         assertEq(token.allowance(address(this), alice), 2e18);
     }
 
     function testDescreaseAllowance() external {
         testApprove();
-        assertTrue(token.decreaseAllowance(alice, 0.5e18));
+        token.decreaseAllowance(alice, 0.5e18);
         assertEq(token.allowance(address(this), alice), 0.5e18);
     }
 
@@ -94,7 +93,7 @@ contract ERC20Test is MudV2Test {
         testMint();
         vm.prank(alice);
         token.approve(address(this), 1e18);
-        assertTrue(token.transferFrom(alice, bob, 0.7e18));
+        token.transferFrom(alice, bob, 0.7e18);
         assertEq(token.allowance(alice, address(this)), 1e18 - 0.7e18);
         assertEq(token.balanceOf(alice), 2e18 - 0.7e18);
         assertEq(token.balanceOf(bob), 0.7e18);
@@ -163,7 +162,7 @@ contract ERC20Test is MudV2Test {
     function balance(address account) public returns (uint256 bal) {
       bytes memory rawBalance = world.call(
         tableId,
-        SYSTEM_NAME,
+        ERC20_SYSTEM_NAME,
         abi.encodeWithSelector(
           ERC20System.balanceOf.selector,
          account 
@@ -174,7 +173,7 @@ contract ERC20Test is MudV2Test {
     function allowance(address owner, address spender) public returns (uint256 bal) {
       bytes memory rawBalance = world.call(
         tableId,
-        SYSTEM_NAME,
+        ERC20_SYSTEM_NAME,
         abi.encodeWithSelector(
           ERC20System.allowance.selector,
           owner, spender
@@ -185,7 +184,7 @@ contract ERC20Test is MudV2Test {
 
     function testNameWorld() external {
       bytes memory rawName = world.call(
-        tableId, SYSTEM_NAME,
+        tableId, ERC20_SYSTEM_NAME,
         abi.encodeWithSelector(ERC20System.name.selector)
       );
       string memory name = abi.decode(rawName, (string));
@@ -195,7 +194,7 @@ contract ERC20Test is MudV2Test {
 
     function testSymbolWorld() external {
     bytes memory rawSymbol = world.call(
-        tableId, SYSTEM_NAME,
+        tableId, ERC20_SYSTEM_NAME,
         abi.encodeWithSelector(ERC20System.symbol.selector)
       );
       string memory symbol= abi.decode(rawSymbol, (string));
@@ -205,7 +204,7 @@ contract ERC20Test is MudV2Test {
     function testMintWorld() public {
       world.call(
         tableId,
-        SYSTEM_NAME,
+        ERC20_SYSTEM_NAME,
         abi.encodeWithSelector(
           ERC20TestSystem.mint.selector,
           alice,
@@ -219,7 +218,7 @@ contract ERC20Test is MudV2Test {
     function testBurnWorld() public {
     world.call(
         tableId,
-        SYSTEM_NAME,
+        ERC20_SYSTEM_NAME,
         abi.encodeWithSelector(
           ERC20TestSystem.mint.selector,
           alice,
@@ -232,7 +231,7 @@ contract ERC20Test is MudV2Test {
 
      world.call(
         tableId,
-        SYSTEM_NAME,
+        ERC20_SYSTEM_NAME,
         abi.encodeWithSelector(
           ERC20TestSystem.burn.selector,
           alice,
@@ -242,7 +241,7 @@ contract ERC20Test is MudV2Test {
 
       bytes memory totalSupply = world.call(
         tableId,
-        SYSTEM_NAME,
+        ERC20_SYSTEM_NAME,
         abi.encodeWithSelector(
           ERC20System.totalSupply.selector
         )
@@ -256,7 +255,7 @@ contract ERC20Test is MudV2Test {
     function testApproveWorld() public {
       world.call(
         tableId,
-        SYSTEM_NAME,
+        ERC20_SYSTEM_NAME,
         abi.encodeWithSelector(
           ERC20System.approve.selector,
           alice,
@@ -270,7 +269,7 @@ contract ERC20Test is MudV2Test {
     function testIncreaseAllowanceWorld() external {
       world.call(
         tableId,
-        SYSTEM_NAME,
+        ERC20_SYSTEM_NAME,
         abi.encodeWithSelector(
           ERC20System.increaseAllowance.selector,
           alice,
@@ -285,7 +284,7 @@ contract ERC20Test is MudV2Test {
         testApprove();
       world.call(
         tableId,
-        SYSTEM_NAME,
+        ERC20_SYSTEM_NAME,
         abi.encodeWithSelector(
           ERC20System.decreaseAllowance.selector,
           alice,
@@ -301,7 +300,7 @@ contract ERC20Test is MudV2Test {
         vm.startPrank(alice);
       world.call(
         tableId,
-        SYSTEM_NAME,
+        ERC20_SYSTEM_NAME,
         abi.encodeWithSelector(
           ERC20System.transfer.selector,
           bob,
@@ -318,7 +317,7 @@ contract ERC20Test is MudV2Test {
         vm.prank(alice);
       world.call(
         tableId,
-        SYSTEM_NAME,
+        ERC20_SYSTEM_NAME,
         abi.encodeWithSelector(
           ERC20System.approve.selector,
           address(this),
@@ -327,7 +326,7 @@ contract ERC20Test is MudV2Test {
       );
       world.call(
         tableId,
-        SYSTEM_NAME,
+        ERC20_SYSTEM_NAME,
         abi.encodeWithSelector(
           ERC20System.transferFrom.selector,
           alice,
@@ -361,7 +360,7 @@ contract ERC20Test is MudV2Test {
 
     function testFuzzApprove(address to, uint256 amount) external {
         vm.assume(to != address(0));
-        assertTrue(token.approve(to,amount));
+        token.approve(to,amount);
         assertEq(token.allowance(address(this),to), amount);
     }
 
@@ -370,7 +369,7 @@ contract ERC20Test is MudV2Test {
         vm.assume(to != address(this));
         token.mint(address(this), amount);
         
-        assertTrue(token.transfer(to,amount));
+        token.transfer(to,amount);
         assertEq(token.balanceOf(address(this)), 0);
         assertEq(token.balanceOf(to), amount);
     }
@@ -383,9 +382,9 @@ contract ERC20Test is MudV2Test {
         token.mint(from, amount);
 
         vm.prank(from);
-        assertTrue(token.approve(address(this), approval));
+        token.approve(address(this), approval);
 
-        assertTrue(token.transferFrom(from, to, amount));
+        token.transferFrom(from, to, amount);
         assertEq(token.totalSupply(), amount);
 
         if (approval == type(uint256).max){

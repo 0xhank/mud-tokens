@@ -1,5 +1,4 @@
 import { extendMUDCoreConfig } from "@latticexyz/config";
-import { zPluginStoreConfig } from "@latticexyz/store/config";
 import { zPluginWorldConfig } from "@latticexyz/world";
 import { zPluginTokenConfig } from "./plugin";
 
@@ -7,19 +6,28 @@ extendMUDCoreConfig((config) => {
   const modifiedConfig = { ...config } as Record<string, unknown>;
   const tokenConfig = zPluginTokenConfig.parse(config);
 
-  if (tokenConfig.tokens) {
-    const worldConfig = zPluginWorldConfig.parse(config);
-    const storeConfig = zPluginStoreConfig.parse(config);
+  if (!tokenConfig.tokens) return modifiedConfig;
 
-    let excludeSystems = (worldConfig.excludeSystems || []) as string[];
-    let modules = [];
-    tokenConfig.tokens.forEach((token) => {
-      const tokenName = `${token.type}${token.name}System.sol`;
-      excludeSystems.push(tokenName);
-      // modules.push({ name: TokenModule, root: "" });
-    });
-    modifiedConfig.excludeSystems = excludeSystems;
-  }
+  const worldConfig = zPluginWorldConfig.parse(config);
+
+  const newModules = tokenConfig.tokens.map((token) => ({
+    name: `${token.type}Module`,
+    root: false,
+    args: [
+      { value: token.name, type: "string" },
+      { value: token.symbol, type: "string" },
+    ],
+  }));
+
+  modifiedConfig.modules = [
+    ...worldConfig.modules,
+    {
+      name: "SnapSyncModule",
+      root: true,
+      args: [],
+    },
+    ...newModules,
+  ];
 
   return modifiedConfig;
 });

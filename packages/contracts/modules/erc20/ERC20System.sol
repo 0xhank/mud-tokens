@@ -4,15 +4,15 @@
 pragma solidity ^0.8.0;
 
 import { System } from "@latticexyz/world/src/System.sol";
-import { IWorld } from "../../codegen/world/IWorld.sol";
-import { AllowanceTable } from "../../codegen/Tables.sol";
-import { MetadataTable } from "../../codegen/Tables.sol";
-import { BalanceTable } from "../../codegen/Tables.sol";
+import { IBaseWorld } from "@latticexyz/world/src/interfaces/IBaseWorld.sol";
+import { BalanceTable } from "../common/BalanceTable.sol";
+import { AllowanceTable} from "../common/AllowanceTable.sol";
+import { MetadataTable } from "../common/MetadataTable.sol";
+
 import { ERC20Proxy } from "./ERC20Proxy.sol"; 
-import {nameToBytes16, tokenToTable, Token} from "../../utils.sol";
+import {nameToBytes16, tokenToTable, Token} from "../common/utils.sol";
 import '@latticexyz/world/src/ResourceSelector.sol';
 
-bytes16 constant SYSTEM_NAME = bytes16('erc20_system');
 
 contract ERC20System is System {
 
@@ -38,17 +38,10 @@ contract ERC20System is System {
       // world.registerFunctionSelector(namespace, SYSTEM_NAME, "transferBypass", "(address, address, uint256)");
       // world.registerFunctionSelector(namespace, SYSTEM_NAME, "approveBypass", "(address, address, uint256)");
       // world.registerFunctionSelector(namespace, SYSTEM_NAME, "spendAllowanceBypass", "(address, address, uint256)");
-      // // register tables
-      // metadataTableId = world.registerTable(namespace,bytes16('metadata'), MetadataTable.getSchema(), MetadataTable.getKeySchema());
-      // balanceTableId = world.registerTable(namespace, bytes16('balance'), BalanceTable.getSchema(), BalanceTable.getKeySchema());
-      // allowanceTableId = world.registerTable(namespace, bytes16('allowance'), AllowanceTable.getSchema(), AllowanceTable.getKeySchema());
 
       metadataTableId = ResourceSelector.from(namespace, bytes16('metadata'));
       balanceTableId = ResourceSelector.from(namespace, bytes16('balance'));
       allowanceTableId = ResourceSelector.from(namespace, bytes16('allowance'));
- 
-      MetadataTable.setName(metadataTableId, _name);
-      MetadataTable.setSymbol(metadataTableId, _symbol);
     }
 
     function name() public view virtual returns (string memory) {

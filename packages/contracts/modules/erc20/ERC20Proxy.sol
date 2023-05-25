@@ -2,26 +2,29 @@
 
 pragma solidity ^0.8.0;
 
-import "../interfaces/IERC20Proxy.sol";
+import "./interfaces/IERC20Proxy.sol";
 import { IBaseWorld } from "@latticexyz/world/src/interfaces/IBaseWorld.sol";
-import {ERC20System, SYSTEM_NAME } from "./ERC20System.sol";
-import { BalanceTable, AllowanceTable, MetadataTable } from "../tables/Tables.sol";
-import {tokenToTable, Token} from "../utils.sol";
+import {ERC20System } from "./ERC20System.sol";
+import { BalanceTable } from "../common/BalanceTable.sol";
+import { AllowanceTable} from "../common/AllowanceTable.sol";
+import { MetadataTable } from "../common/MetadataTable.sol";
+import {tokenToTable, Token} from "../common/utils.sol";
+import {BALANCE_TABLE_NAME, METADATA_TABLE_NAME, ALLOWANCE_TABLE_NAME} from "../common/constants.sol";
 
 contract ERC20Proxy is IERC20Proxy {
 
-    IWorld private world;
+    IBaseWorld private world;
     ERC20System private token;
     bytes32 immutable balanceTableId;
     bytes32 immutable metadataTableId;
     bytes32 immutable allowanceTableId;
 
-    constructor (IWorld _world, ERC20System _token, string memory _name) {
+    constructor (IBaseWorld _world, ERC20System _token, string memory _name) {
       world =_world;
       token = _token;
-      balanceTableId = tokenToTable(_name, Token.ERC20);
-      metadataTableId = tokenToTable(_name, Token.ERC20);
-      allowanceTableId = tokenToTable(_name, Token.ERC20);
+      balanceTableId = tokenToTable(_name, BALANCE_TABLE_NAME);
+      metadataTableId = tokenToTable(_name, METADATA_TABLE_NAME);
+      allowanceTableId = tokenToTable(_name, ALLOWANCE_TABLE_NAME);
     }
 
     function name() public view virtual override returns (string memory){
