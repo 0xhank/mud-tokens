@@ -5,17 +5,25 @@ pragma solidity ^0.8.0;
 import "../interfaces/IERC20Proxy.sol";
 import { IWorld } from "../../codegen/world/IWorld.sol";
 import {ERC20System, SYSTEM_NAME } from "./ERC20System.sol";
-import {nameToBytes16} from "../../utils.sol";
+import { BalanceTable } from "../../codegen/Tables.sol";
+import { AllowanceTable } from "../../codegen/Tables.sol";
+import { MetadataTable } from "../../codegen/Tables.sol";
+import {tokenToTable, Token} from "../../utils.sol";
 
 contract ERC20Proxy is IERC20Proxy {
 
     IWorld private world;
     ERC20System private token;
-    bytes16 private mudId;
-    function setup(IWorld _world, ERC20System _token, string memory _name) internal {
+    bytes32 immutable balanceTableId;
+    bytes32 immutable metadataTableId;
+    bytes32 immutable allowanceTableId;
+
+    constructor (IWorld _world, ERC20System _token, string memory _name) {
       world =_world;
-      mudId = nameToBytes16(_name);
       token = _token;
+      balanceTableId = tokenToTable(_name, Token.ERC20);
+      metadataTableId = tokenToTable(_name, Token.ERC20);
+      allowanceTableId = tokenToTable(_name, Token.ERC20);
     }
 
     function name() public view virtual override returns (string memory){
@@ -74,69 +82,59 @@ contract ERC20Proxy is IERC20Proxy {
 
         return true;
     }
+    
+    function _transfer(address from, address to, uint256 amount) internal {
+        require(from != address(0), "ERC20: transfer from the zero address");
+        require(to != address(0), "ERC20: transfer to the zero address");
 
-    function _transfer(address from, address to, uint256 amount) internal virtual {
-      world.call(
-        mudId,
-        SYSTEM_NAME,
-        abi.encodeWithSelector(
-          ERC20System.transferBypass.selector,
-          from,
-          to,
-          amount
-        )
-      );
+        uint256 fromBalance = BalanceTable.get(world, balanceTableId, from);
+        uint256 toBalance = BalanceTable.get(world, balanceTableId, to);
+        require(fromBalance >= amount, "ERC20: transfer amount exceeds balance");
+        BalanceTable.set(world, balanceTableId, from, fromBalance - amount);
+        BalanceTable.set(world, balanceTableId, to, toBalance + amount);
+
+        emit Transfer(from, to, amount);
     }
 
-    function _mint (address account, uint256 amount) internal virtual {
-      world.call(
-        mudId,
-        SYSTEM_NAME,
-        abi.encodeWithSelector(
-          ERC20System.mintBypass.selector,
-          account,
-          amount
-        )
-      );
+    function _mint(address account, uint256 amount) internal {
+        require(account != address(0), "ERC20: mint to the zero address");
+        uint256 _totalSupply = MetadataTable.getTotalSupply(world, metadataTableId);
+        uint256 balance = BalanceTable.get(world, balanceTableId, account);
+        
+        MetadataTable.setTotalSupply(world, metadataTableId,  _totalSupply + amount);
+
+        BalanceTable.set(world, balanceTableId, account, balance + amount);
+        emit Transfer(address(0), account, amount);
     }
 
-    function _burn (address account, uint256 amount) internal virtual {
-      world.call(
-        mudId,
-        SYSTEM_NAME,
-        abi.encodeWithSelector(
-          ERC20System.burnBypass.selector,
-          account,
-          amount
-        )
-      );
+    function _burn(address account, uint256 amount) internal {
+        require(account != address(0), "ERC20: burn from the zero address");
+
+        uint256 accountBalance = BalanceTable.get(world, balanceTableId, account);
+
+        uint256 _totalSupply = MetadataTable.getTotalSupply(world, metadataTableId);
+        require(accountBalance >= amount, "ERC20: burn amount exceeds balance");
+
+        BalanceTable.set(world, balanceTableId, account, accountBalance - amount);
+        MetadataTable.setTotalSupply(world, metadataTableId,  _totalSupply - amount);
+
+        emit Transfer(account, address(0), amount);
+    }
+    
+    function _approve(address owner, address spender, uint256 amount) internal {
+        require(owner != address(0), "ERC20: approve from the zero address");
+        require(spender != address(0), "ERC20: approve to the zero address");
+        AllowanceTable.set(world, allowanceTableId, owner, spender, amount);
     }
 
-    function _approve (address owner, address spender, uint256 amount) internal virtual {
-        world.call(
-        mudId,
-        SYSTEM_NAME,
-        abi.encodeWithSelector(
-          ERC20System.approveBypass.selector,
-          owner,
-          spender,
-          amount
-        )
-      );
-    }
+    function _spendAllowance(address owner, address spender, uint256 amount) internal {
+        uint256 currentAllowance = allowance(owner, spender);
+        if (currentAllowance != type(uint256).max) {
+            require(currentAllowance >= amount, "ERC20: insufficient allowance");
+            _approve(owner, spender, currentAllowance - amount);
+        }
 
-    function _spendAllowance (address owner, address spender, uint256 amount) internal virtual {
-      world.call(
-        mudId,
-        SYSTEM_NAME,
-        abi.encodeWithSelector(
-          ERC20System.spendAllowanceBypass.selector,
-          owner,
-          spender,
-          amount
-        )
-      );
-
+      emit Approval(owner, spender, amount);
     }
 
     function emitApproval(address owner, address spender, uint256 value) public virtual {
