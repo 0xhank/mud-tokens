@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "build": "forge clean && forge build",
+    "tokengen": "tsx ./src/cli/tokengenScript.ts tokengen",
     "initialize": "pnpm run tablegen && pnpm run worldgen && pnpm run build && pnpm run worldtypes",
     "lint": "pnpm run prettier && pnpm run solhint",
     "prettier": "prettier --write 'src/**/*.sol'",
@@ -19,12 +20,16 @@
     "@ethersproject/bytes": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
     "@latticexyz/cli": "2.0.0-alpha.1.197",
+    "@latticexyz/common": "2.0.0-alpha.1.197",
     "@latticexyz/config": "2.0.0-alpha.1.197",
     "@latticexyz/schema-type": "2.0.0-alpha.1.197",
     "@latticexyz/std-contracts": "2.0.0-alpha.1.197",
     "@latticexyz/store": "2.0.0-alpha.1.197",
     "@latticexyz/world": "2.0.0-alpha.1.197",
+    "@types/yargs": "^17.0.24",
     "ethers": "^5.7.2",
+    "tsx": "^3.12.7",
+    "yargs": "^17.7.2",
     "zod": "^3.21.4"
   },
   "devDependencies": {

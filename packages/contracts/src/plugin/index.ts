@@ -1,6 +1,6 @@
 /**
  * Importing this file automatically adds the required MUD modules to make
- * snap sync work.
+ * tokens work.
  */
 
 import "./configExtensions";

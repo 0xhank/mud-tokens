@@ -4,13 +4,14 @@ import { zPluginTokenConfig } from "./plugin";
 
 extendMUDCoreConfig((config) => {
   const modifiedConfig = { ...config } as Record<string, unknown>;
-  const tokenConfig = zPluginTokenConfig.parse(config);
+  const tokens = zPluginTokenConfig.parse(config)?.tokens;
+  console.log("tokens", tokens);
 
-  if (!tokenConfig.tokens) return modifiedConfig;
+  if (!tokens || tokens.length === 0) return modifiedConfig;
 
   const worldConfig = zPluginWorldConfig.parse(config);
 
-  const newModules = tokenConfig.tokens.map((token) => ({
+  const newModules = tokens.map((token) => ({
     name: `${token.type}Module`,
     root: false,
     args: [
@@ -19,9 +20,18 @@ extendMUDCoreConfig((config) => {
     ],
   }));
 
+  modifiedConfig.systems = tokens.reduce((acc: Record<string, { name: string; openAccess: boolean }>, token) => {
+    let key = token.name + "System";
+    acc[key] = {
+      name: token.name,
+      openAccess: true,
+    };
+    return acc;
+  }, {});
+
   modifiedConfig.modules = [...worldConfig.modules, ...newModules];
 
-  console.log("new config:", modifiedConfig);
-
+  modifiedConfig.excludeSystems = [...worldConfig.excludeSystems, "ERC20System", "ERC721System"];
+  console.log("config extended", modifiedConfig);
   return modifiedConfig;
 });
