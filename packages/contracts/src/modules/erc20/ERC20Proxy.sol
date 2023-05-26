@@ -8,18 +8,19 @@ import {ERC20System } from "./ERC20System.sol";
 import { BalanceTable } from "../common/BalanceTable.sol";
 import { AllowanceTable} from "../common/AllowanceTable.sol";
 import { MetadataTable } from "../common/MetadataTable.sol";
-import {tokenToTable, Token} from "../common/utils.sol";
-import {BALANCE_TABLE_NAME, METADATA_TABLE_NAME, ALLOWANCE_TABLE_NAME} from "../common/constants.sol";
+import {tokenToTable, Token, nameToBytes16} from "../common/utils.sol";
+import {ERC20_SYSTEM_NAME, BALANCE_TABLE_NAME, METADATA_TABLE_NAME, ALLOWANCE_TABLE_NAME} from "../common/constants.sol";
+import { console } from "forge-std/console.sol";
 
 contract ERC20Proxy is IERC20Proxy {
 
-    IBaseWorld private world;
+    IBaseWorld world;
     bytes32 immutable balanceTableId;
     bytes32 immutable metadataTableId;
     bytes32 immutable allowanceTableId;
 
     constructor (IBaseWorld _world, string memory _name) {
-      world =_world;
+      world= _world;
       balanceTableId = tokenToTable(_name, BALANCE_TABLE_NAME);
       metadataTableId = tokenToTable(_name, METADATA_TABLE_NAME);
       allowanceTableId = tokenToTable(_name, ALLOWANCE_TABLE_NAME);
@@ -137,12 +138,16 @@ contract ERC20Proxy is IERC20Proxy {
     }
 
     function emitApproval(address owner, address spender, uint256 value) public virtual {
-      require(msg.sender == address(world), "ERC20: Only World or MUD token can emit approval event");
+      bytes memory rawSystemAddress = world.call(nameToBytes16(name()), ERC20_SYSTEM_NAME, abi.encodeWithSelector(ERC20System.getAddress.selector));
+      require(msg.sender == address(world) || msg.sender == abi.decode(rawSystemAddress, (address)), "ERC20: Only World or MUD token can emit approval event");
+
       emit Approval(owner, spender, value);
     }
 
     function emitTransfer(address from, address to, uint256 value) public virtual {
-      require(msg.sender == address(world), "ERC20: Only World or MUD token can emit transfer event");
+      bytes memory rawSystemAddress = world.call(nameToBytes16(name()), ERC20_SYSTEM_NAME, abi.encodeWithSelector(ERC20System.getAddress.selector));
+      address systemAddress = abi.decode(rawSystemAddress, (address));
+      require(msg.sender == address(world) || msg.sender == systemAddress, "ERC20: Only World or MUD token can emit transfer event");
       emit Transfer(from, to, value);
     }
 }

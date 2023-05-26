@@ -26,7 +26,6 @@ contract ERC20Module is IModule, WorldContext {
   function install(bytes memory args) public {
     (string memory _name, string memory _symbol ) = abi.decode(args, (string, string));
     IBaseWorld world = IBaseWorld(_world());
-
     ERC20Proxy proxy = new ERC20Proxy(world, _name);
     bytes16 NAMESPACE = nameToBytes16(_name);
     world.registerTable(NAMESPACE, BALANCE_TABLE_NAME, BalanceTable.getSchema(), BalanceTable.getKeySchema());
@@ -39,6 +38,7 @@ contract ERC20Module is IModule, WorldContext {
     MetadataTable.setSymbol(world, metadataTableId, _symbol);
     MetadataTable.setProxy(world, metadataTableId, address(proxy));
 
+    // todo: remove this once inheritance and custom namespaces are added to MUD
     world.registerSystem(NAMESPACE, ERC20_SYSTEM_NAME, token, true);
     world.registerFunctionSelector(NAMESPACE, ERC20_SYSTEM_NAME, "mint", "(address, uint256)");
     world.registerFunctionSelector(NAMESPACE, ERC20_SYSTEM_NAME, "burn", "(address, uint256)");
@@ -58,7 +58,5 @@ contract ERC20Module is IModule, WorldContext {
     world.registerFunctionSelector(NAMESPACE, ERC20_SYSTEM_NAME, "transferBypass", "(address, address, uint256)");
     world.registerFunctionSelector(NAMESPACE, ERC20_SYSTEM_NAME, "approveBypass", "(address, address, uint256)");
     world.registerFunctionSelector(NAMESPACE, ERC20_SYSTEM_NAME, "spendAllowanceBypass", "(address, address, uint256)");
-
-
   }
 }

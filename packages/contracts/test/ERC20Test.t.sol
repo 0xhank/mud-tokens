@@ -24,7 +24,6 @@ contract ERC20Test is MudV2Test {
     super.setUp();
     world = IWorld(worldAddress);
     string memory name = "ERC20Test";
-    string memory symbol = "ERC";
 
     namespace = nameToBytes16(name);
     bytes memory proxy = world.call(namespace, ERC20_SYSTEM_NAME, abi.encodeWithSelector(ERC20System.proxy.selector));
@@ -45,12 +44,12 @@ contract ERC20Test is MudV2Test {
     }
     assertTrue(codeSize > 0);
   }
+
    function testName() external {
       assertEq("ERC20Test",token.name());
    }
 
     function testSymbol() external {
-      console.log('symbol:', token.symbol());
         assertEq("ERC", token.symbol());
     }
 
@@ -144,7 +143,7 @@ contract ERC20Test is MudV2Test {
     }
 
     function testBurnWorld() public {
-    world.call(
+      world.call(
         namespace,
         ERC20_SYSTEM_NAME,
         abi.encodeWithSelector(

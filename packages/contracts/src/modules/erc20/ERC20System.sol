@@ -21,6 +21,7 @@ contract ERC20System is System {
     bytes32 immutable private metadataTableId;
     bytes32 immutable balanceTableId;
     bytes32 immutable allowanceTableId;
+    
     constructor(string memory namespaceString) {
       bytes16 namespace = nameToBytes16(namespaceString);
       metadataTableId = ResourceSelector.from(namespace, METADATA_TABLE_NAME);
@@ -37,8 +38,11 @@ contract ERC20System is System {
     }
 
     function proxy() public view virtual returns (address){
-      console.log('proxy: ', uint256(metadataTableId));
       return MetadataTable.getProxy(metadataTableId);
+    }
+
+    function getAddress() public view returns (address){
+      return address(this);
     }
   
     function totalSupply() public view  virtual returns (uint256) {
@@ -91,7 +95,7 @@ contract ERC20System is System {
         BalanceTable.set(balanceTableId, from, fromBalance - amount);
         BalanceTable.set(balanceTableId, to, toBalance + amount);
 
-        ERC20Proxy(proxy()).emitTransfer(from, to, amount);
+        emitTransfer(from, to, amount);
     }
 
     function _mint(address account, uint256 amount) internal {
@@ -102,7 +106,7 @@ contract ERC20System is System {
         MetadataTable.setTotalSupply(metadataTableId,  _totalSupply + amount);
 
         BalanceTable.set(balanceTableId, account, balance + amount);
-        ERC20Proxy(proxy()).emitTransfer(address(0), account, amount);
+        emitTransfer(address(0), account, amount);
     }
 
     function _burn(address account, uint256 amount) internal {
@@ -115,14 +119,14 @@ contract ERC20System is System {
 
         BalanceTable.set(balanceTableId, account, accountBalance - amount);
         MetadataTable.setTotalSupply(metadataTableId,  _totalSupply - amount);
-
-        ERC20Proxy(proxy()).emitTransfer(account, address(0), amount);
     }
     
     function _approve(address owner, address spender, uint256 amount) internal {
         require(owner != address(0), "ERC20: approve from the zero address");
         require(spender != address(0), "ERC20: approve to the zero address");
         AllowanceTable.set(allowanceTableId, owner, spender, amount);
+        ERC20Proxy(proxy()).emitApproval(owner, spender, amount);
+
     }
 
     function _spendAllowance(address owner, address spender, uint256 amount) internal {
@@ -132,6 +136,11 @@ contract ERC20System is System {
             _approve(owner, spender, currentAllowance - amount);
         }
 
-      ERC20Proxy(proxy()).emitApproval(owner, spender, amount);
+    }
+
+    function emitTransfer(address from, address to, uint256 amount) private { 
+      console.log('msg sender:', msg.sender);
+      console.log('this:', address(this));
+      ERC20Proxy(proxy()).emitTransfer(from, to, amount);
     }
 }
