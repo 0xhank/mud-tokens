@@ -3,13 +3,13 @@ pragma solidity >=0.8.0;
 
 import "forge-std/Test.sol";
 import { MudV2Test } from "@latticexyz/std-contracts/src/test/MudV2Test.t.sol";
-import { ERC20System } from "../src/modules/erc20/ERC20System.sol";
-import {ERC20_SYSTEM_NAME} from "../src/modules/common/constants.sol";
+import { ERC20System } from "@latticexyz/world/src/modules/tokens/erc20/ERC20System.sol";
+import {ERC20_SYSTEM_NAME} from "@latticexyz/world/src/modules/tokens/common/constants.sol";
 import { IWorld } from "../src/codegen/world/IWorld.sol";
 import {ERC20TestSystem} from "../src/ERC20TestSystem.sol";
-import {ERC20Proxy} from "../src//modules/erc20/ERC20Proxy.sol";
-import {ERC20Module} from "../src/modules/erc20/ERC20Module.sol";
-import {nameToBytes16} from "../src/modules/common/utils.sol";
+import {ERC20Proxy} from "@latticexyz/world/src/modules/tokens/erc20/ERC20Proxy.sol";
+import {ERC20Module} from "@latticexyz/world/src/modules/tokens/erc20/ERC20Module.sol";
+import {nameToBytes16} from "@latticexyz/world/src/modules/tokens/common/utils.sol";
 
 // I took these tests from https://github.com/Atarpara/openzeppeline-erc20-foundry-test
 contract ERC20Test is MudV2Test {

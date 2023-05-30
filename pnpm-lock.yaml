@@ -55,9 +55,6 @@ importers:
       '@latticexyz/store':
         specifier: 2.0.0-alpha.1.197
         version: 2.0.0-alpha.1.197(typescript@5.0.4)
-      '@latticexyz/world':
-        specifier: 2.0.0-alpha.1.197
-        version: 2.0.0-alpha.1.197(typescript@5.0.4)
       '@types/yargs':
         specifier: ^17.0.24
         version: 17.0.24
@@ -853,23 +850,6 @@ packages:
       - bufferutil
       - typescript
       - utf-8-validate
-
-  /@latticexyz/world@2.0.0-alpha.1.197(typescript@5.0.4):
-    resolution: {integrity: sha512-pKbGoCcI7tDBjFlTRlxexn3noQXmybeTcQujZoeo3DXjHG78IlGDQAQW5UxGOQ9S3f2e1EM7EeG9WvWe6jq5Qw==}
-    dependencies:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/providers': 5.7.2
-      '@latticexyz/common': 2.0.0-alpha.1.197(typescript@5.0.4)(zod@3.21.4)
-      '@latticexyz/config': 2.0.0-alpha.1.197(typescript@5.0.4)
-      '@latticexyz/schema-type': 2.0.0-alpha.1.197(typescript@5.0.4)(zod@3.21.4)
-      '@latticexyz/store': 2.0.0-alpha.1.197(typescript@5.0.4)
-      ethers: 5.7.2
-      zod: 3.21.4
-    transitivePeerDependencies:
-      - bufferutil
-      - typescript
-      - utf-8-validate
-    dev: false
 
   /@morgan-stanley/ts-mocking-bird@0.6.4(typescript@4.9.5):
     resolution: {integrity: sha512-57VJIflP8eR2xXa9cD1LUawh+Gh+BVQfVu0n6GALyg/AqV/Nz25kDRvws3i9kIe1PTrbsZZOYpsYp6bXPd6nVA==}

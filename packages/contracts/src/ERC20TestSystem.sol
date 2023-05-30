@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import { ERC20System } from "../src/modules/erc20/ERC20System.sol";
+import { ERC20System } from "@latticexyz/world/src/modules/tokens/erc20/ERC20System.sol";
 
 contract ERC20TestSystem is ERC20System {
 

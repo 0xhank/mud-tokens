@@ -25,7 +25,6 @@
     "@latticexyz/schema-type": "2.0.0-alpha.1.197",
     "@latticexyz/std-contracts": "2.0.0-alpha.1.197",
     "@latticexyz/store": "2.0.0-alpha.1.197",
-    "@latticexyz/world": "2.0.0-alpha.1.197",
     "@types/yargs": "^17.0.24",
     "ethers": "^5.7.2",
     "tsx": "^3.12.7",
