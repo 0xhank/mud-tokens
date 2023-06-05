@@ -14,7 +14,7 @@ import { ERC721Table } from "./ERC721Table.sol";
 import { ERC721Proxy } from "./ERC721Proxy.sol"; 
 import {IERC721Receiver} from "./interfaces/IERC721Receiver.sol";
 import {nameToBytes16, tokenToTable, Token} from "../common/utils.sol";
-import {METADATA_TABLE_NAME, ERC721_TABLE_NAME, BALANCE_TABLE_NAME, ALLOWANCE_TABLE_NAME} from "../common/constants.sol";
+import {METADATA_T, ERC721_T, BALANCE_T, ALLOWANCE_T} from "../common/constants.sol";
 import {ResourceSelector } from "@latticexyz/world/src/ResourceSelector.sol";
 import { console } from "forge-std/console.sol";
 
@@ -29,10 +29,10 @@ contract ERC721System is System {
     
     constructor(string memory _name ) {
       namespace = nameToBytes16(_name);
-      metadataTableId = from(METADATA_TABLE_NAME);
-      balanceTableId = from(BALANCE_TABLE_NAME);
-      allowanceTableId = from(ALLOWANCE_TABLE_NAME);
-      ERC721TableId = from(ERC721_TABLE_NAME);
+      metadataTableId = from(METADATA_T);
+      balanceTableId = from(BALANCE_T);
+      allowanceTableId = from(ALLOWANCE_T);
+      ERC721TableId = from(ERC721_T);
     }
 
     function from(bytes16 name) public view returns (bytes32){

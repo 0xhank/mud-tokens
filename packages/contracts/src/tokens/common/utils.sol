@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {ERC20_SYSTEM_NAME} from "./constants.sol";
-// import {SYSTEM_NAME as ERC721_SYSTEM} from "./internal/ERC721System.sol";
 import "@latticexyz/world/src/ResourceSelector.sol";
 
 enum Token {

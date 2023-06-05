@@ -6,7 +6,7 @@
   "scripts": {
     "build": "forge clean && forge build",
     "tokengen": "tsx ./src/cli/tokengenScript.ts tokengen",
-    "initialize": "pnpm run tablegen && pnpm run worldgen && pnpm run build && pnpm run worldtypes",
+    "prep": "pnpm run tablegen && pnpm run worldgen && pnpm run build && pnpm run worldtypes",
     "lint": "pnpm run prettier && pnpm run solhint",
     "prettier": "prettier --write 'src/**/*.sol'",
     "solhint": "solhint --config ./.solhint.json 'src/**/*.sol' --fix",

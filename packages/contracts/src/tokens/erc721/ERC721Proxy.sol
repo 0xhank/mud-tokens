@@ -13,7 +13,7 @@ import { ERC721Table } from "./ERC721Table.sol";
 import  "../common/ERC165.sol";
 
 import {tokenToTable, Token, nameToBytes16} from "../common/utils.sol";
-import {ERC721_TABLE_NAME, ERC721_SYSTEM_NAME, BALANCE_TABLE_NAME, METADATA_TABLE_NAME, ALLOWANCE_TABLE_NAME} from "../common/constants.sol";
+import {ERC721_T, ERC721_S, BALANCE_T, METADATA_T, ALLOWANCE_T} from "../common/constants.sol";
 
 contract ERC721Proxy is IERC721Proxy {
 
@@ -25,15 +25,15 @@ contract ERC721Proxy is IERC721Proxy {
     
     constructor (IBaseWorld _world, string memory _name) {
       world= _world;
-      balanceTableId = tokenToTable(_name, BALANCE_TABLE_NAME);
-      metadataTableId = tokenToTable(_name, METADATA_TABLE_NAME);
-      allowanceTableId = tokenToTable(_name, ALLOWANCE_TABLE_NAME);
-      ERC721TableId = tokenToTable(_name, ERC721_TABLE_NAME);
+      balanceTableId = tokenToTable(_name, BALANCE_T);
+      metadataTableId = tokenToTable(_name, METADATA_T);
+      allowanceTableId = tokenToTable(_name, ALLOWANCE_T);
+      ERC721TableId = tokenToTable(_name, ERC721_T);
     }
     
     modifier onlySystemOrWorld() {
-      bytes memory rawSystemAddress = world.call(nameToBytes16(name()), ERC721_SYSTEM_NAME, abi.encodeWithSelector(ERC721System.getAddress.selector));
-      require(msg.sender == address(world) || msg.sender == abi.decode(rawSystemAddress, (address)), "ERC20: Only World or MUD token can emit approval event");
+      bytes memory rawSystemAddress = world.call(nameToBytes16(name()), ERC721_S, abi.encodeWithSelector(ERC721System.getAddress.selector));
+      require(msg.sender == address(world) || msg.sender == abi.decode(rawSystemAddress, (address)), "ERC721: Only World or MUD token can emit approval event");
       _;
     }
 
