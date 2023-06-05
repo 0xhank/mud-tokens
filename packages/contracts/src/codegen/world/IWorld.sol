@@ -5,13 +5,15 @@ pragma solidity >=0.8.0;
 
 import { IBaseWorld } from "@latticexyz/world/src/interfaces/IBaseWorld.sol";
 
-import { IERC20TestSystem } from "./IERC20TestSystem.sol";
-import { IERC20System } from "./IERC20System.sol";
+import { IChatSystem } from "./IChatSystem.sol";
+import { IIncrementSystem } from "./IIncrementSystem.sol";
+import { IInventorySystem } from "./IInventorySystem.sol";
+import { IStructSystem } from "./IStructSystem.sol";
 
 /**
  * The IWorld interface includes all systems dynamically added to the World
  * during the deploy process.
  */
-interface IWorld is IBaseWorld, IERC20TestSystem, IERC20System {
+interface IWorld is IBaseWorld, IChatSystem, IIncrementSystem, IInventorySystem, IStructSystem {
 
 }
