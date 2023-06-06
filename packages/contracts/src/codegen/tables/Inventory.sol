@@ -68,7 +68,11 @@ library Inventory {
   }
 
   /** Get amount */
-  function get(address owner, uint32 item, uint32 itemVariant) internal view returns (uint32 amount) {
+  function get(
+    address owner,
+    uint32 item,
+    uint32 itemVariant
+  ) internal view returns (uint32 amount) {
     bytes32[] memory _keyTuple = new bytes32[](3);
     _keyTuple[0] = bytes32(uint256(uint160((owner))));
     _keyTuple[1] = bytes32(uint256((item)));
@@ -79,7 +83,12 @@ library Inventory {
   }
 
   /** Get amount (using the specified store) */
-  function get(IStore _store, address owner, uint32 item, uint32 itemVariant) internal view returns (uint32 amount) {
+  function get(
+    IStore _store,
+    address owner,
+    uint32 item,
+    uint32 itemVariant
+  ) internal view returns (uint32 amount) {
     bytes32[] memory _keyTuple = new bytes32[](3);
     _keyTuple[0] = bytes32(uint256(uint160((owner))));
     _keyTuple[1] = bytes32(uint256((item)));
@@ -90,7 +99,12 @@ library Inventory {
   }
 
   /** Set amount */
-  function set(address owner, uint32 item, uint32 itemVariant, uint32 amount) internal {
+  function set(
+    address owner,
+    uint32 item,
+    uint32 itemVariant,
+    uint32 amount
+  ) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
     _keyTuple[0] = bytes32(uint256(uint160((owner))));
     _keyTuple[1] = bytes32(uint256((item)));
@@ -100,7 +114,13 @@ library Inventory {
   }
 
   /** Set amount (using the specified store) */
-  function set(IStore _store, address owner, uint32 item, uint32 itemVariant, uint32 amount) internal {
+  function set(
+    IStore _store,
+    address owner,
+    uint32 item,
+    uint32 itemVariant,
+    uint32 amount
+  ) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
     _keyTuple[0] = bytes32(uint256(uint160((owner))));
     _keyTuple[1] = bytes32(uint256((item)));
@@ -127,7 +147,11 @@ library Inventory {
   }
 
   /* Delete all data for given keys */
-  function deleteRecord(address owner, uint32 item, uint32 itemVariant) internal {
+  function deleteRecord(
+    address owner,
+    uint32 item,
+    uint32 itemVariant
+  ) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
     _keyTuple[0] = bytes32(uint256(uint160((owner))));
     _keyTuple[1] = bytes32(uint256((item)));
@@ -137,7 +161,12 @@ library Inventory {
   }
 
   /* Delete all data for given keys (using the specified store) */
-  function deleteRecord(IStore _store, address owner, uint32 item, uint32 itemVariant) internal {
+  function deleteRecord(
+    IStore _store,
+    address owner,
+    uint32 item,
+    uint32 itemVariant
+  ) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
     _keyTuple[0] = bytes32(uint256(uint160((owner))));
     _keyTuple[1] = bytes32(uint256((item)));

@@ -1,9 +1,8 @@
 import { mudConfig } from "@latticexyz/world/register";
-
+// import "@latticexyz/world/token";
 export default mudConfig({
   excludeSystems: ["ERC20System", "ERC721System"],
   // tokens: [{ name: "ERC20Test", symbol: "ERC", type: "ERC20" }],
-  tokens: [],
   tables: {},
   systems: {},
   modules: [
