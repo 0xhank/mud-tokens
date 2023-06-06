@@ -77,4 +77,16 @@ contract ERC721Test is MudV2Test {
       assertEq(token.balanceOf(alice), 0);
     }
 
+    function testPlace() public {
+      testMint();
+      vm.startPrank(alice);
+      uint256 x = 49;
+      uint256 y = 50;
+      call(abi.encodeWithSelector(ERC721TestToken.place.selector, tokenId, x, y));
+      bytes memory rawLocation = call(abi.encodeWithSelector(ERC721TestToken.location.selector, tokenId));
+      (uint256 retX, uint256 retY) = abi.decode(rawLocation, (uint256, uint256));
+      assertEq(retX, x);
+      assertEq(retY, y);
+    }
+
 }

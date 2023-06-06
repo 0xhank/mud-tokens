@@ -4,10 +4,12 @@ pragma solidity >=0.8.0;
 import { IBaseWorld } from "@latticexyz/world/src/interfaces/IBaseWorld.sol";
 import { IModule } from "@latticexyz/world/src/interfaces/IModule.sol";
 import { ERC721Proxy } from "@latticexyz/world/src/modules/tokens/erc721/ERC721Proxy.sol";
-import { ERC721TestToken, namespace, tableName } from "./ERC721TestToken.sol";
 import { WorldContext } from "@latticexyz/world/src/WorldContext.sol";
 import { ERC721Registration } from "@latticexyz/world/src/modules/tokens/erc721/ERC721Registration.sol";
 import { ERC721_S } from "@latticexyz/world/src/modules/tokens/common/constants.sol";
+
+import {TokenLocation} from "./codegen/tables/TokenLocation.sol";
+import { ERC721TestToken, namespace, tableName } from "./ERC721TestToken.sol";
 
 contract ERC721TestModule is IModule, WorldContext {
   // this trick circumvents the issue of file size too large
@@ -39,8 +41,11 @@ contract ERC721TestModule is IModule, WorldContext {
 
     // register additional tables and function selectors the extended token contract uses
     // TODO: make this autogenerate in the tokengen script
+    world.registerTable(namespace, tableName, TokenLocation.getSchema(), TokenLocation.getKeySchema());
     world.registerFunctionSelector(namespace, ERC721_S, "mint", "(address, uint256)");
     world.registerFunctionSelector(namespace, ERC721_S, "burn", "(uint256)");
     world.registerFunctionSelector(namespace, ERC721_S, "transfer", "(address, uint256)");
+    world.registerFunctionSelector(namespace, ERC721_S, "place", "(uint256, uint256, uint256)");
+    world.registerFunctionSelector(namespace, ERC721_S, "location", "(uint256)");
   }
 }
