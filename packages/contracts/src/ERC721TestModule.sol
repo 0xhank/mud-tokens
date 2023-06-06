@@ -14,7 +14,7 @@ contract ERC721TestModule is IModule, WorldContext {
   ERC721Registration registration = new ERC721Registration();
 
   function getName() public pure returns (bytes16) {
-    return bytes16("SmartObject.m");
+    return bytes16("ERC721Test.m");
   }
 
   function install(bytes memory args) public {
