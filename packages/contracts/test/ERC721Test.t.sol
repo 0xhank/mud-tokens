@@ -3,12 +3,12 @@ pragma solidity >=0.8.0;
 
 import "forge-std/Test.sol";
 import { MudV2Test } from "@latticexyz/std-contracts/src/test/MudV2Test.t.sol";
-import { ERC721_S, METADATA_T } from "@latticexyz/world/src/modules/tokens/common/constants.sol";
-import { MetadataTable } from "@latticexyz/world/src/modules/tokens/common/MetadataTable.sol";
+import { ERC721_S, METADATA_T } from "../tokens/common/constants.sol";
+import { MetadataTable } from "../tokens/common/MetadataTable.sol";
 import { IWorld } from "../src/codegen/world/IWorld.sol";
-import {ERC721Proxy} from "@latticexyz/world/src/modules/tokens/erc721/ERC721Proxy.sol";
+import {ERC721Proxy} from "../tokens/erc721/ERC721Proxy.sol";
 import {ResourceSelector } from "@latticexyz/world/src/ResourceSelector.sol";
-import {LibERC721} from "@latticexyz/world/src/modules/tokens/erc721/LibERC721.sol";
+import {LibERC721} from "../tokens/erc721/LibERC721.sol";
 import {ERC721TestToken, namespace} from "../src/ERC721TestToken.sol";
 import { ResourceType } from "@latticexyz/world/src/modules/core/tables/ResourceType.sol";
 import { Resource } from "@latticexyz/world/src/Types.sol";
