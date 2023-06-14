@@ -14,14 +14,4 @@ export default mudConfig({
     },
   },
   systems: {},
-  modules: [
-    {
-      name: "ERC721TestModule",
-      root: false,
-      args: [
-        { value: "ERC721Test", type: "string" },
-        { value: "ERC", type: "string" },
-      ],
-    },
-  ],
 });
