@@ -9,7 +9,7 @@ import {TokenLocation} from "./codegen/tables/TokenLocation.sol";
 import { ERC721TestToken, namespace, tableName, systemName } from "./ERC721TestToken.sol";
 
 library ERC721TestScript {
-  function run(address worldAddress ) public {
+  function run(address worldAddress ) internal{
     IBaseWorld world = IBaseWorld(worldAddress);
 
     console.log('installing');

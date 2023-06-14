@@ -18,18 +18,16 @@ contract ERC721Test is MudV2Test {
   IWorld public world;
   address public alice = address(uint160(0x6345659));
   address public bob = address(uint160(0x420));
+  ERC721Proxy token;
   uint256 tokenId = 69;
 
   uint256 initialSupply = 1000;
   function setUp() public override {
     super.setUp();
     world = IWorld(worldAddress);
+    token = ERC721Proxy(LibERC721.proxy(world, namespace));
   }
 
-  function token() private returns (ERC721Proxy _token){
-    address proxy =MetadataTable.getProxy(world, ResourceSelector.from(namespace, METADATA_T));
-    _token = ERC721Proxy(proxy);
-  }
 
   function call(bytes memory args) public returns (bytes memory) {
       return world.call(namespace, ERC721_S, args);
@@ -51,8 +49,8 @@ contract ERC721Test is MudV2Test {
   }
 
    function testName() external {
-      string memory _name = token().name();
-      assertEq("ERC721Test", _name);
+      string memory _name = token.name();
+      assertEq("Test", _name);
    }
 
     // function testSymbol() external {
