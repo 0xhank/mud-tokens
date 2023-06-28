@@ -5,10 +5,14 @@ pragma solidity >=0.8.0;
 
 import { IBaseWorld } from "@latticexyz/world/src/interfaces/IBaseWorld.sol";
 
+import { IERC1155TestToken } from "./IERC1155TestToken.sol";
+import { IERC20TestToken } from "./IERC20TestToken.sol";
+import { IERC721TestToken } from "./IERC721TestToken.sol";
+
 /**
  * The IWorld interface includes all systems dynamically added to the World
  * during the deploy process.
  */
-interface IWorld is IBaseWorld {
+interface IWorld is IBaseWorld, IERC1155TestToken, IERC20TestToken, IERC721TestToken {
 
 }

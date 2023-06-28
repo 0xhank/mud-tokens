@@ -4,11 +4,11 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "build": "forge clean && forge build",
+    "build": "forge clean && pnpm run tablegen && pnpm run worldgen && forge build && pnpm run worldtypes",
     "tokengen": "tsx ./src/cli/tokengenScript.ts tokengen",
     "prep": "pnpm run tablegen && pnpm run worldgen && pnpm run build && pnpm run worldtypes",
     "lint": "pnpm run prettier && pnpm run solhint",
-    "prettier": "prettier --write 'src/**/*.sol'",
+    "prettier": "prettier --write '**/*.sol'",
     "solhint": "solhint --config ./.solhint.json 'src/**/*.sol' --fix",
     "tablegen": "mud tablegen",
     "test": "mud test",
