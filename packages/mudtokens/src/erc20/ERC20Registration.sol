@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { IBaseWorld } from "@latticexyz/world/src/interfaces/IBaseWorld.sol";
-import { ResourceSelector } from "@latticexyz/world/src/ResourceSelector.sol";
+import { ResourceSelector, ROOT_NAMESPACE } from "@latticexyz/world/src/ResourceSelector.sol";
 
 import { ERC20Proxy } from "./ERC20Proxy.sol";
 import { AllowanceTable } from "../common/AllowanceTable.sol";
@@ -28,6 +28,24 @@ library ERC20Registration {
     world.grantAccess(namespace, ALLOWANCE, proxyAddress);
     world.grantAccess(namespace, BALANCE, proxyAddress);
     world.grantAccess(namespace, METADATA, proxyAddress);
+  }
+
+  function install(IBaseWorld world, string memory _name, string memory symbol) internal {
+    ERC20Proxy proxy = new ERC20Proxy(world, ROOT_NAMESPACE);
+
+    bytes32 metadataTableId = registerTables(world, ROOT_NAMESPACE);
+
+    address proxyAddress = address(proxy);
+
+    // set token metadata
+    MetadataTable.setProxy(world, metadataTableId, proxyAddress);
+    MetadataTable.setName(world, metadataTableId, _name);
+    MetadataTable.setSymbol(world, metadataTableId, symbol);
+
+    // let the proxy contract modify tables directly
+    world.grantAccess(ROOT_NAMESPACE, ALLOWANCE, proxyAddress);
+    world.grantAccess(ROOT_NAMESPACE, BALANCE, proxyAddress);
+    world.grantAccess(ROOT_NAMESPACE, METADATA, proxyAddress);
   }
 
   function registerTables(IBaseWorld world, bytes16 namespace) private returns (bytes32 tableId) {
