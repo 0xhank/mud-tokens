@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 import { IBaseWorld } from "@latticexyz/world/src/interfaces/IBaseWorld.sol";
-import { ERC721Registration } from "mudtokens/src/tokens.sol";
+import { ERC721Registration } from "mudtokens/src/erc721/ERC721Registration.sol";
 import { ERC1155Registration } from "mudtokens/src/tokens.sol";
 import { ERC20Registration } from "mudtokens/src/tokens.sol";
 import { TokenLocation } from "./codegen/tables/TokenLocation.sol";

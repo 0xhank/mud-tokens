@@ -72,7 +72,7 @@ importers:
         specifier: ^5.7.2
         version: 5.7.2
       mudtokens:
-        specifier: ../mudtokens
+        specifier: link:../mudtokens
         version: link:../mudtokens
       tsx:
         specifier: ^3.12.7
@@ -121,8 +121,8 @@ importers:
         specifier: 2.0.0-next.4
         version: 2.0.0-next.4(typescript@4.9.5)
       '@latticexyz/world':
-        specifier: ^1.42.0
-        version: 1.42.0(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(@latticexyz/config@2.0.0-next.4)(@latticexyz/schema-type@2.0.0-next.4)(@latticexyz/store@2.0.0-next.4)(ds-test@1.0.0)(ethers@5.7.2)(forge-std@1.2.0)
+        specifier: 2.0.0-next.4
+        version: 2.0.0-next.4(typescript@4.9.5)
       ds-test:
         specifier: github:dapphub/ds-test#c9ce3f25bde29fc5eb9901842bf02850dfd2d084
         version: github.com/dapphub/ds-test/c9ce3f25bde29fc5eb9901842bf02850dfd2d084
@@ -1145,28 +1145,6 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@latticexyz/world@1.42.0(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(@latticexyz/config@2.0.0-next.4)(@latticexyz/schema-type@2.0.0-next.4)(@latticexyz/store@2.0.0-next.4)(ds-test@1.0.0)(ethers@5.7.2)(forge-std@1.2.0):
-    resolution: {integrity: sha512-TjvIMb2rWymZ9QtS5rt43LPWG9fEqKxrideqIHRfzR+GiQCgX/VjhzpEPvGdL+uauspg3DE6JDDfKSriC9SRKA==}
-    peerDependencies:
-      '@ethersproject/abi': ^5.7.0
-      '@ethersproject/providers': ^5.7.2
-      '@latticexyz/config': latest
-      '@latticexyz/schema-type': latest
-      '@latticexyz/store': latest
-      ds-test: https://github.com/dapphub/ds-test.git#c9ce3f25bde29fc5eb9901842bf02850dfd2d084
-      ethers: ^5.7.2
-      forge-std: https://github.com/foundry-rs/forge-std.git#b4f121555729b3afb3c5ffccb62ff4b6e2818fd3
-    dependencies:
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/providers': 5.7.2
-      '@latticexyz/config': 2.0.0-next.4(typescript@4.9.5)
-      '@latticexyz/schema-type': 2.0.0-next.4(typescript@4.9.5)(zod@3.21.4)
-      '@latticexyz/store': 2.0.0-next.4(typescript@4.9.5)
-      ds-test: github.com/dapphub/ds-test/c9ce3f25bde29fc5eb9901842bf02850dfd2d084
-      ethers: 5.7.2
-      forge-std: github.com/foundry-rs/forge-std/b4f121555729b3afb3c5ffccb62ff4b6e2818fd3
-    dev: false
-
   /@latticexyz/world@2.0.0-alpha.1.197(typescript@4.9.5):
     resolution: {integrity: sha512-pKbGoCcI7tDBjFlTRlxexn3noQXmybeTcQujZoeo3DXjHG78IlGDQAQW5UxGOQ9S3f2e1EM7EeG9WvWe6jq5Qw==}
     dependencies:
@@ -1213,6 +1191,25 @@ packages:
       '@latticexyz/gas-report': 2.0.0-main-b8a6158d
       '@latticexyz/schema-type': 2.0.0-main-b8a6158d(typescript@5.1.6)(zod@3.21.4)
       '@latticexyz/store': 2.0.0-main-b8a6158d(typescript@5.1.6)
+      ethers: 5.7.2
+      zod: 3.21.4
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - typescript
+      - utf-8-validate
+    dev: false
+
+  /@latticexyz/world@2.0.0-next.4(typescript@4.9.5):
+    resolution: {integrity: sha512-oMaFYa/7rxeiPTTpMJu3a53uGaZAMpKVWt9Rr2DZKKT8kkZdGXnKmIsGm+r/Z70xChTibJdoZz24elygMuEnjA==}
+    dependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      '@latticexyz/common': 2.0.0-next.4(typescript@4.9.5)(zod@3.21.4)
+      '@latticexyz/config': 2.0.0-next.4(typescript@4.9.5)
+      '@latticexyz/gas-report': 2.0.0-next.4
+      '@latticexyz/schema-type': 2.0.0-next.4(typescript@4.9.5)(zod@3.21.4)
+      '@latticexyz/store': 2.0.0-next.4(typescript@4.9.5)
       ethers: 5.7.2
       zod: 3.21.4
     transitivePeerDependencies:

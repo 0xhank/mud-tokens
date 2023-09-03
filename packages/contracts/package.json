@@ -27,7 +27,7 @@
     "@latticexyz/std-contracts": "2.0.0-main-b8a6158d",
     "@latticexyz/store": "2.0.0-main-b8a6158d",
     "@latticexyz/world": "2.0.0-main-b8a6158d",
-    "mudtokens": "../mudtokens",
+    "mudtokens": "link:../mudtokens",
     "@types/yargs": "^17.0.24",
     "ethers": "^5.7.2",
     "tsx": "^3.12.7",

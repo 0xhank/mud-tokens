@@ -9,7 +9,7 @@ import { ERC20Proxy, LibERC20 } from "mudtokens/src/tokens.sol";
 import { ResourceSelector } from "@latticexyz/world/src/ResourceSelector.sol";
 import { ERC20TestToken, namespace, systemName } from "../src/systems/ERC20TestToken.sol";
 
-contract ERC20Test is MudV2Test {
+contract ERC20Test is MudTest {
   IWorld public world;
   address public alice = address(uint160(0x6345659));
   address public bob = address(uint160(0x420));
@@ -63,7 +63,6 @@ contract ERC20Test is MudV2Test {
 
   function testTransfer() public {
     testMint();
-    vm.prank(alice);
     world.transfer20(bob, amount - 1);
     assertEq(token.balanceOf(bob), amount - 1);
     assertEq(token.totalSupply(), amount);

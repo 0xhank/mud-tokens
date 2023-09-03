@@ -1,7 +1,7 @@
 {
   "name": "mud-tokens",
   "version": "1.0.0",
-  "description": "",
+  "description": "Integration for tokens into the MUD architecture",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -13,7 +13,7 @@
     "@latticexyz/config": "2.0.0-next.4",
     "@latticexyz/schema-type": "2.0.0-next.4",
     "@latticexyz/store": "2.0.0-next.4",
-    "@latticexyz/world": "^1.42.0",
+    "@latticexyz/world": "2.0.0-next.4",
     "ds-test": "github:dapphub/ds-test#c9ce3f25bde29fc5eb9901842bf02850dfd2d084",
     "forge-std": "github:foundry-rs/forge-std#b4f121555729b3afb3c5ffccb62ff4b6e2818fd3"
   }
