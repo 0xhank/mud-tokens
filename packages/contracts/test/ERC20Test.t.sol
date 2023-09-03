@@ -80,4 +80,9 @@ contract ERC20Test is MudTest {
     assertEq(retX, x);
     assertEq(retY, y);
   }
+
+  function testNamespaces() public {
+    testMint();
+    assertEq(LibERC20.balanceOf(namespace, bob), LibERC20.balanceOf(bob));
+  }
 }

@@ -76,4 +76,9 @@ contract ERC1155Test is MudTest {
     assertEq(retY, y);
     vm.stopPrank();
   }
+
+  function testNamespaces() public {
+    testMint();
+    assertEq(LibERC1155.balanceOf(namespace, bob, tokenId), LibERC1155.balanceOf(bob, tokenId));
+  }
 }

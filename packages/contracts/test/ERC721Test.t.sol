@@ -82,4 +82,8 @@ contract ERC721Test is MudTest {
     assertEq(retX, x);
     assertEq(retY, y);
   }
+function testNamespaces() public {
+    testMint();
+    assertEq(LibERC721.balanceOf(namespace, bob), LibERC721.balanceOf(bob));
+  }
 }
