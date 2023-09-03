@@ -31,21 +31,7 @@ library ERC20Registration {
   }
 
   function install(IBaseWorld world, string memory _name, string memory symbol) internal {
-    ERC20Proxy proxy = new ERC20Proxy(world, ROOT_NAMESPACE);
-
-    bytes32 metadataTableId = registerTables(world, ROOT_NAMESPACE);
-
-    address proxyAddress = address(proxy);
-
-    // set token metadata
-    MetadataTable.setProxy(world, metadataTableId, proxyAddress);
-    MetadataTable.setName(world, metadataTableId, _name);
-    MetadataTable.setSymbol(world, metadataTableId, symbol);
-
-    // let the proxy contract modify tables directly
-    world.grantAccess(ROOT_NAMESPACE, ALLOWANCE, proxyAddress);
-    world.grantAccess(ROOT_NAMESPACE, BALANCE, proxyAddress);
-    world.grantAccess(ROOT_NAMESPACE, METADATA, proxyAddress);
+    install(world, ROOT_NAMESPACE, _name, symbol);
   }
 
   function registerTables(IBaseWorld world, bytes16 namespace) private returns (bytes32 tableId) {

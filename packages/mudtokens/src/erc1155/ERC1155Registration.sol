@@ -29,20 +29,7 @@ library ERC1155Registration {
   }
 
   function install(IBaseWorld world, string memory uri) internal {
-    ERC1155Proxy proxy = new ERC1155Proxy(world, ROOT_NAMESPACE);
-
-    bytes32 metadataTableId = registerTables(world, ROOT_NAMESPACE);
-
-    address proxyAddress = address(proxy);
-
-    // set token metadata
-    Metadata.setProxy(world, metadataTableId, proxyAddress);
-    Metadata.setUri(world, metadataTableId, uri);
-
-    // let the proxy contract modify tables directly
-    world.grantAccess(ROOT_NAMESPACE, APPROVALS, proxyAddress);
-    world.grantAccess(ROOT_NAMESPACE, BALANCE, proxyAddress);
-    world.grantAccess(ROOT_NAMESPACE, METADATA, proxyAddress);
+    install(world, ROOT_NAMESPACE, uri);
   }
 
   function registerTables(IBaseWorld world, bytes16 namespace) private returns (bytes32 tableId) {

@@ -34,25 +34,9 @@ library ERC721Registration {
   }
 
   function install(IBaseWorld world, string memory _name, string memory _symbol) internal {
-    ERC721Proxy proxy = new ERC721Proxy(world, ROOT_NAMESPACE);
-
-    bytes32 metadataTableId = registerTables(world, ROOT_NAMESPACE);
-
-    address proxyAddress = address(proxy);
-
-    // set token metadata
-    MetadataTable.setProxy(world, metadataTableId, proxyAddress);
-    MetadataTable.setName(world, metadataTableId, _name);
-    MetadataTable.setSymbol(world, metadataTableId, _symbol);
-
-    proxyAddress = MetadataTable.getProxy(world, metadataTableId);
-
-    // let the proxy contract modify tables directly
-    world.grantAccess(ROOT_NAMESPACE, METADATA_T, proxyAddress);
-    world.grantAccess(ROOT_NAMESPACE, ALLOWANCE_T, proxyAddress);
-    world.grantAccess(ROOT_NAMESPACE, BALANCE_T, proxyAddress);
-    world.grantAccess(ROOT_NAMESPACE, ERC721_T, proxyAddress);
+    install(world, ROOT_NAMESPACE, _name, _symbol);
   }
+
   function registerTables(IBaseWorld world, bytes16 namespace) private returns (bytes32 tableId) {
     tableId = ResourceSelector.from(namespace, BALANCE_T);
     BalanceTable.registerSchema(world, tableId);
