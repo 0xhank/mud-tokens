@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 import { System } from "@latticexyz/world/src/System.sol";
-import { LibERC721 } from "@latticexyz/world/src/modules/tokens/erc721/LibERC721.sol";
+import { LibERC721 } from "mudtokens/src/tokens.sol";
 import { ResourceSelector } from "@latticexyz/world/src/ResourceSelector.sol";
 import { TokenLocation, TokenLocationData } from "../codegen/tables/TokenLocation.sol";
 import { namespace, locationTableName as tableName } from "../constants.sol";

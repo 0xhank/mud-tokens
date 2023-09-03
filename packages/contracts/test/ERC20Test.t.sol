@@ -2,11 +2,11 @@
 pragma solidity >=0.8.0;
 
 import "forge-std/Test.sol";
-import { MudV2Test } from "@latticexyz/std-contracts/src/test/MudV2Test.t.sol";
+import { MudTest } from "@latticexyz/store/src/MudTest.sol";
+
 import { IWorld } from "../src/codegen/world/IWorld.sol";
-import { ERC20Proxy } from "@latticexyz/world/src/modules/tokens/erc20/ERC20Proxy.sol";
+import { ERC20Proxy, LibERC20 } from "mudtokens/src/tokens.sol";
 import { ResourceSelector } from "@latticexyz/world/src/ResourceSelector.sol";
-import { LibERC20 } from "@latticexyz/world/src/modules/tokens/erc20/LibERC20.sol";
 import { ERC20TestToken, namespace, systemName } from "../src/systems/ERC20TestToken.sol";
 
 contract ERC20Test is MudV2Test {

@@ -2,14 +2,13 @@
 pragma solidity >=0.8.0;
 
 import "forge-std/Test.sol";
-import { MudV2Test } from "@latticexyz/std-contracts/src/test/MudV2Test.t.sol";
+import { MudTest } from "@latticexyz/store/src/MudTest.sol";
 import { IWorld } from "../src/codegen/world/IWorld.sol";
-import { ERC721Proxy } from "@latticexyz/world/src/modules/tokens/erc721/ERC721Proxy.sol";
+import { ERC721Proxy, LibERC721 } from "mudtokens/src/tokens.sol";
 import { ResourceSelector } from "@latticexyz/world/src/ResourceSelector.sol";
-import { LibERC721 } from "@latticexyz/world/src/modules/tokens/erc721/LibERC721.sol";
 import { ERC721TestToken, namespace, systemName } from "../src/systems/ERC721TestToken.sol";
 
-contract ERC721Test is MudV2Test {
+contract ERC721Test is MudTest {
   IWorld public world;
   address public alice = address(uint160(0x6345659));
   address public bob = address(uint160(0x420));
