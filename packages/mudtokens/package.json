@@ -1,5 +1,5 @@
 {
-  "name": "mud-tokens",
+  "name": "mudtokens",
   "version": "1.0.0",
   "description": "Integration for tokens into the MUD architecture",
   "main": "index.js",
