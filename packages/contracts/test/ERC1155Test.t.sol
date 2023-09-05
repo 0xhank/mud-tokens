@@ -25,7 +25,7 @@ contract ERC1155Test is MudTest {
   }
 
   function call(bytes memory args) public returns (bytes memory) {
-    return world.call(namespace, systemName, args);
+    return world.call(ResourceSelector.from(namespace, systemName), args);
   }
 
   modifier prank(address prankster) {

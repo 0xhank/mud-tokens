@@ -6,9 +6,8 @@ import { IERC1155 } from "./interfaces/IERC1155.sol";
 import { ERC1155Proxy } from "./ERC1155Proxy.sol";
 import { IERC1155Receiver } from "./interfaces/IERC1155Receiver.sol";
 import { IERC1155MetadataURI } from "./interfaces/IERC1155MetadataURI.sol";
-import { ERC1155ApprovalTable as Approvals } from "./ERC1155ApprovalTable.sol";
-import { ERC1155MetadataTable as Metadata } from "./ERC1155MetadataTable.sol";
-import { ERC1155BalanceTable as Balance } from "./ERC1155BalanceTable.sol";
+
+import {ERC1155ApprovalTable as Approvals, ERC1155BalanceTable as Balance, ERC1155MetadataTable as Metadata} from "../codegen/Tables.sol";
 import { ERC1155_APPROVAL_T as APPROVALS, ERC1155_BALANCE_T as BALANCE, ERC1155_METADATA_T as METADATA } from "../common/constants.sol";
 import { ResourceSelector, ROOT_NAMESPACE } from "@latticexyz/world/src/ResourceSelector.sol";
 
@@ -208,9 +207,6 @@ library LibERC1155 {
   ) internal {
     require(to != address(0), "ERC1155: transfer to the zero address");
 
-    uint256[] memory ids = _asSingletonArray(id);
-    uint256[] memory amounts = _asSingletonArray(amount);
-
     uint256 fromBalance = Balance.get(getSelector(namespace, BALANCE), id, from);
     require(fromBalance >= amount, "ERC1155: insufficient balance for transfer");
     Balance.set(getSelector(namespace, BALANCE), id, from, fromBalance - amount);
@@ -234,9 +230,6 @@ library LibERC1155 {
     bytes memory data
   ) internal {
     require(to != address(0), "ERC1155: transfer to the zero address");
-
-    uint256[] memory ids = _asSingletonArray(id);
-    uint256[] memory amounts = _asSingletonArray(amount);
 
     uint256 fromBalance = Balance.get(world, getSelector(namespace, BALANCE), id, from);
     require(fromBalance >= amount, "ERC1155: insufficient balance for transfer");
@@ -370,8 +363,6 @@ library LibERC1155 {
     require(to != address(0), "ERC1155: mint to the zero address");
 
     address operator = msgSender;
-    uint256[] memory ids = _asSingletonArray(id);
-    uint256[] memory amounts = _asSingletonArray(amount);
 
     uint256 toBalance = Balance.get(getSelector(namespace, BALANCE), id, to);
     Balance.set(getSelector(namespace, BALANCE), id, to, amount + toBalance);
@@ -393,8 +384,6 @@ library LibERC1155 {
     require(to != address(0), "ERC1155: mint to the zero address");
 
     address operator = msgSender;
-    uint256[] memory ids = _asSingletonArray(id);
-    uint256[] memory amounts = _asSingletonArray(amount);
 
     uint256 toBalance = Balance.get(world, getSelector(namespace, BALANCE), id, to);
     Balance.set(world, getSelector(namespace, BALANCE), id, to, amount + toBalance);
@@ -476,8 +465,6 @@ library LibERC1155 {
     require(from != address(0), "ERC1155: burn from the zero address");
 
     address operator = msgSender;
-    uint256[] memory ids = _asSingletonArray(id);
-    uint256[] memory amounts = _asSingletonArray(amount);
 
     uint256 fromBalance = Balance.get(getSelector(namespace, BALANCE), id, from);
     require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
@@ -497,8 +484,6 @@ library LibERC1155 {
     require(from != address(0), "ERC1155: burn from the zero address");
 
     address operator = msgSender;
-    uint256[] memory ids = _asSingletonArray(id);
-    uint256[] memory amounts = _asSingletonArray(amount);
 
     uint256 fromBalance = Balance.get(world, getSelector(namespace, BALANCE), id, from);
     require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
@@ -805,8 +790,6 @@ library LibERC1155 {
   ) internal {
     require(to != address(0), "ERC1155: transfer to the zero address");
 
-    uint256[] memory ids = _asSingletonArray(id);
-    uint256[] memory amounts = _asSingletonArray(amount);
 
     uint256 fromBalance = Balance.get(getSelector(ROOT_NAMESPACE, BALANCE), id, from);
     require(fromBalance >= amount, "ERC1155: insufficient balance for transfer");
@@ -832,8 +815,6 @@ library LibERC1155 {
   ) internal {
     require(to != address(0), "ERC1155: transfer to the zero address");
 
-    uint256[] memory ids = _asSingletonArray(id);
-    uint256[] memory amounts = _asSingletonArray(amount);
 
     uint256 fromBalance = Balance.get(world, getSelector(ROOT_NAMESPACE, BALANCE), id, from);
     require(fromBalance >= amount, "ERC1155: insufficient balance for transfer");
@@ -967,9 +948,6 @@ library LibERC1155 {
     require(to != address(0), "ERC1155: mint to the zero address");
 
     address operator = msgSender;
-    uint256[] memory ids = _asSingletonArray(id);
-    uint256[] memory amounts = _asSingletonArray(amount);
-
     uint256 toBalance = Balance.get(getSelector(ROOT_NAMESPACE, BALANCE), id, to);
     Balance.set(getSelector(ROOT_NAMESPACE, BALANCE), id, to, amount + toBalance);
 
@@ -990,8 +968,6 @@ library LibERC1155 {
     require(to != address(0), "ERC1155: mint to the zero address");
 
     address operator = msgSender;
-    uint256[] memory ids = _asSingletonArray(id);
-    uint256[] memory amounts = _asSingletonArray(amount);
 
     uint256 toBalance = Balance.get(world, getSelector(ROOT_NAMESPACE, BALANCE), id, to);
     Balance.set(world, getSelector(ROOT_NAMESPACE, BALANCE), id, to, amount + toBalance);
@@ -1073,8 +1049,6 @@ library LibERC1155 {
     require(from != address(0), "ERC1155: burn from the zero address");
 
     address operator = msgSender;
-    uint256[] memory ids = _asSingletonArray(id);
-    uint256[] memory amounts = _asSingletonArray(amount);
 
     uint256 fromBalance = Balance.get(getSelector(ROOT_NAMESPACE, BALANCE), id, from);
     require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");
@@ -1094,8 +1068,6 @@ library LibERC1155 {
     require(from != address(0), "ERC1155: burn from the zero address");
 
     address operator = msgSender;
-    uint256[] memory ids = _asSingletonArray(id);
-    uint256[] memory amounts = _asSingletonArray(amount);
 
     uint256 fromBalance = Balance.get(world, getSelector(ROOT_NAMESPACE, BALANCE), id, from);
     require(fromBalance >= amount, "ERC1155: burn amount exceeds balance");

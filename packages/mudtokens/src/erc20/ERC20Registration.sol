@@ -5,9 +5,7 @@ import { IBaseWorld } from "@latticexyz/world/src/interfaces/IBaseWorld.sol";
 import { ResourceSelector, ROOT_NAMESPACE } from "@latticexyz/world/src/ResourceSelector.sol";
 
 import { ERC20Proxy } from "./ERC20Proxy.sol";
-import { AllowanceTable } from "../common/AllowanceTable.sol";
-import { BalanceTable } from "../common/BalanceTable.sol";
-import { MetadataTable } from "../common/MetadataTable.sol";
+import { AllowanceTable, BalanceTable, MetadataTable } from "../codegen/Tables.sol";
 
 import { ERC20_ALLOWANCE_T as ALLOWANCE, ERC20_BALANCE_T as BALANCE, ERC20_METADATA_T as METADATA } from "../common/constants.sol";
 
@@ -25,9 +23,9 @@ library ERC20Registration {
     MetadataTable.setSymbol(world, metadataTableId, symbol);
 
     // let the proxy contract modify tables directly
-    world.grantAccess(namespace, ALLOWANCE, proxyAddress);
-    world.grantAccess(namespace, BALANCE, proxyAddress);
-    world.grantAccess(namespace, METADATA, proxyAddress);
+    world.grantAccess(ResourceSelector.from(namespace, ALLOWANCE), proxyAddress);
+    world.grantAccess(ResourceSelector.from(namespace, BALANCE), proxyAddress);
+    world.grantAccess(ResourceSelector.from(namespace, METADATA), proxyAddress);
   }
 
   function install(IBaseWorld world, string memory _name, string memory symbol) internal {
@@ -36,15 +34,12 @@ library ERC20Registration {
 
   function registerTables(IBaseWorld world, bytes16 namespace) private returns (bytes32 tableId) {
     tableId = ResourceSelector.from(namespace, ALLOWANCE);
-    AllowanceTable.registerSchema(world, tableId);
-    AllowanceTable.setMetadata(world, tableId);
+    AllowanceTable.register(world, tableId);
 
     tableId = ResourceSelector.from(namespace, BALANCE);
-    BalanceTable.registerSchema(world, tableId);
-    BalanceTable.setMetadata(world, tableId);
+    BalanceTable.register(world, tableId);
 
     tableId = ResourceSelector.from(namespace, METADATA);
-    MetadataTable.registerSchema(world, tableId);
-    MetadataTable.setMetadata(world, tableId);
+    MetadataTable.register(world, tableId);
   }
 }

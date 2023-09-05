@@ -3,9 +3,7 @@ pragma solidity >=0.8.0;
 
 import { IBaseWorld } from "@latticexyz/world/src/interfaces/IBaseWorld.sol";
 import { ResourceSelector, ROOT_NAMESPACE } from "@latticexyz/world/src/ResourceSelector.sol";
-import { BalanceTable } from "../common/BalanceTable.sol";
-import { AllowanceTable } from "../common/AllowanceTable.sol";
-import { MetadataTable } from "../common/MetadataTable.sol";
+import { AllowanceTable, BalanceTable, MetadataTable } from "../codegen/Tables.sol";
 import { ERC20_ALLOWANCE_T as ALLOWANCE, ERC20_BALANCE_T as BALANCE, ERC20_METADATA_T as METADATA } from "../common/constants.sol";
 import { IERC20 } from "./interfaces/IERC20.sol";
 import { IERC20Metadata } from "./interfaces/IERC20Metadata.sol";
@@ -40,10 +38,14 @@ library LibERC20 {
     return MetadataTable.getProxy(world, from(namespace, METADATA));
   }
   
-  function decimals(bytes16 namespace) internal view returns (uint8) {
+  function decimals(bytes16) internal pure returns (uint8) {
     return 18;
   }
   
+  function decimals() internal pure returns (uint8) {
+    return 18;
+  }
+
   function totalSupply(bytes16 namespace) internal view returns (uint256) {
     return MetadataTable.getTotalSupply(from(namespace, METADATA));
   }
@@ -74,7 +76,7 @@ library LibERC20 {
     uint256 amount
   ) internal returns (bool) {
     address owner = msgSender;
-    _transfer(namespace, owner, to, amount);
+    _transfer(world, namespace, owner, to, amount);
     return true;
   }
   
@@ -323,11 +325,7 @@ library LibERC20 {
   function proxy(IBaseWorld world) internal view returns (address) {
     return MetadataTable.getProxy(world, from(ROOT_NAMESPACE, METADATA));
   }
-  
-  function decimals() internal view returns (uint8) {
-    return 18;
-  }
-  
+
   function totalSupply() internal view returns (uint256) {
     return MetadataTable.getTotalSupply(from(ROOT_NAMESPACE, METADATA));
   }
@@ -357,7 +355,7 @@ library LibERC20 {
     uint256 amount
   ) internal returns (bool) {
     address owner = msgSender;
-    _transfer(ROOT_NAMESPACE, owner, to, amount);
+    _transfer(world, ROOT_NAMESPACE, owner, to, amount);
     return true;
   }
   
