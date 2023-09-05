@@ -12,7 +12,7 @@ import { LibERC721 } from "./LibERC721.sol";
 import { SystemRegistry } from "@latticexyz/world/src/modules/core/tables/SystemRegistry.sol";
 
 contract ERC721Proxy is IERC721Proxy {
-  IBaseWorld private world;
+  IBaseWorld public immutable world;
   bytes16 private immutable namespace;
 
   constructor(IBaseWorld _world, bytes16 _namespace) {
