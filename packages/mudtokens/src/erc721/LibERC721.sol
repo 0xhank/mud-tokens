@@ -4,13 +4,10 @@ pragma solidity >=0.8.0;
 import { IBaseWorld } from "@latticexyz/world/src/interfaces/IBaseWorld.sol";
 import { ResourceSelector, ROOT_NAMESPACE } from "@latticexyz/world/src/ResourceSelector.sol";
 
-import { BalanceTable } from "../common/BalanceTable.sol";
+import { BalanceTable, AllowanceTable, MetadataTable, ERC721Table} from "../codegen/Tables.sol";
 import { IERC165 } from "../common/IERC165.sol";
 import { IERC721Metadata } from "./interfaces/IERC721Metadata.sol";
 import { IERC721 } from "./interfaces/IERC721.sol";
-import { AllowanceTable } from "../common/AllowanceTable.sol";
-import { MetadataTable } from "../common/MetadataTable.sol";
-import { ERC721Table } from "./ERC721Table.sol";
 import { ERC721Proxy } from "./ERC721Proxy.sol";
 import { ERC721_METADATA_T as METADATA_T, ERC721_T, ERC721_BALANCE_T as BALANCE_T, ERC721_ALLOWANCE_T as ALLOWANCE_T } from "../common/constants.sol";
 import { IERC721Receiver } from "./interfaces/IERC721Receiver.sol";
