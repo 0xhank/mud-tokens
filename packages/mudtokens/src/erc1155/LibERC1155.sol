@@ -15,7 +15,7 @@ import { ResourceSelector, ROOT_NAMESPACE } from "@latticexyz/world/src/Resource
 library LibERC1155 {
   modifier onlyProxyWorld(bytes16 namespace) {
     ERC1155Proxy _proxy = ERC1155Proxy(proxy(namespace));
-    require(address(_proxy.world()) == StoreSwitch.getStoreAddress(), "ERC20: invalid world");
+    require(address(_proxy.world()) == StoreSwitch.getStoreAddress(), "ERC1155: invalid world");
     _;
   }
 

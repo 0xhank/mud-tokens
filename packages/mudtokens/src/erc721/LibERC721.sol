@@ -16,7 +16,7 @@ import { IERC721Receiver } from "./interfaces/IERC721Receiver.sol";
 library LibERC721 {
   modifier onlyProxyWorld(bytes16 namespace) {
     ERC721Proxy _proxy = ERC721Proxy(proxy(namespace));
-    require(address(_proxy.world()) == StoreSwitch.getStoreAddress(), "ERC20: invalid world");
+    require(address(_proxy.world()) == StoreSwitch.getStoreAddress(), "ERC721: invalid world");
     _;
   }
 
