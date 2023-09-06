@@ -6,12 +6,19 @@ import { IERC1155 } from "./interfaces/IERC1155.sol";
 import { ERC1155Proxy } from "./ERC1155Proxy.sol";
 import { IERC1155Receiver } from "./interfaces/IERC1155Receiver.sol";
 import { IERC1155MetadataURI } from "./interfaces/IERC1155MetadataURI.sol";
+import { StoreSwitch } from "@latticexyz/store/src/StoreSwitch.sol";
 
 import {ERC1155ApprovalTable as Approvals, ERC1155BalanceTable as Balance, ERC1155MetadataTable as Metadata} from "../codegen/Tables.sol";
 import { ERC1155_APPROVAL_T as APPROVALS, ERC1155_BALANCE_T as BALANCE, ERC1155_METADATA_T as METADATA } from "../common/constants.sol";
 import { ResourceSelector, ROOT_NAMESPACE } from "@latticexyz/world/src/ResourceSelector.sol";
 
 library LibERC1155 {
+  modifier onlyProxyWorld(bytes16 namespace) {
+    ERC1155Proxy _proxy = ERC1155Proxy(proxy(namespace));
+    require(address(_proxy.world()) == StoreSwitch.getStoreAddress(), "ERC1155: invalid world");
+    _;
+  }
+
   function getSelector(bytes16 namespace, bytes16 _name) private pure returns (bytes32) {
     return ResourceSelector.from(namespace, _name);
   }
@@ -580,7 +587,7 @@ library LibERC1155 {
     address to,
     uint256 id,
     uint256 value
-  ) internal {
+  ) internal onlyProxyWorld(namespace){
     ERC1155Proxy(proxy(namespace)).emitTransferSingle(operator, from, to, id, value);
   }
 
@@ -591,11 +598,11 @@ library LibERC1155 {
     address to,
     uint256[] memory ids,
     uint256[] memory values
-  ) internal {
+  ) internal onlyProxyWorld(namespace){
     ERC1155Proxy(proxy(namespace)).emitTransferBatch(operator, from, to, ids, values);
   }
 
-  function emitApprovalForAll(bytes16 namespace, address account, address operator, bool approved) internal {
+  function emitApprovalForAll(bytes16 namespace, address account, address operator, bool approved) internal onlyProxyWorld(namespace){
     ERC1155Proxy(proxy(namespace)).emitApprovalForAll(account, operator, approved);
   }
 
@@ -1211,24 +1218,22 @@ library LibERC1155 {
   }
 
   function emitTransferSingle(
-    
     address operator,
     address from,
     address to,
     uint256 id,
     uint256 value
-  ) internal {
+  ) internal onlyProxyWorld(ROOT_NAMESPACE){
     ERC1155Proxy(proxy(ROOT_NAMESPACE)).emitTransferSingle(operator, from, to, id, value);
   }
 
   function emitTransferBatch(
-    
     address operator,
     address from,
     address to,
     uint256[] memory ids,
     uint256[] memory values
-  ) internal {
+  ) internal onlyProxyWorld(ROOT_NAMESPACE){
     ERC1155Proxy(proxy(ROOT_NAMESPACE)).emitTransferBatch(operator, from, to, ids, values);
   }
 

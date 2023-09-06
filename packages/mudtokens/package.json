@@ -1,6 +1,6 @@
 {
   "name": "mudtokens",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Integration for tokens into the MUD architecture",
   "main": "index.js",
   "scripts": {

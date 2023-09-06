@@ -12,7 +12,7 @@ import { SystemRegistry } from "@latticexyz/world/src/modules/core/tables/System
 import { LibERC20 } from "./LibERC20.sol";
 
 contract ERC20Proxy is IERC20, IERC20Metadata {
-  IBaseWorld private world;
+  IBaseWorld public immutable world;
   bytes16 private immutable namespace;
 
   constructor(IBaseWorld _world, bytes16 _namespace) {

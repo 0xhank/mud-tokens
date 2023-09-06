@@ -10,7 +10,7 @@ import { SystemRegistry } from "@latticexyz/world/src/modules/core/tables/System
 import { LibERC1155 } from "./LibERC1155.sol";
 
 contract ERC1155Proxy is IERC1155 {
-  IBaseWorld private world;
+  IBaseWorld public immutable world;
   bytes16 private immutable namespace;
 
   constructor(IBaseWorld _world, bytes16 _namespace) {

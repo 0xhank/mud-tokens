@@ -71,7 +71,6 @@ contract ERC20Test is MudTest {
 
   function testPlace() public {
     testMint();
-    vm.startPrank(alice);
     uint256 x = 49;
     uint256 y = 50;
     world.place20(amount, x, y);

@@ -3,6 +3,7 @@ pragma solidity >=0.8.0;
 
 import { IBaseWorld } from "@latticexyz/world/src/interfaces/IBaseWorld.sol";
 import { ResourceSelector, ROOT_NAMESPACE } from "@latticexyz/world/src/ResourceSelector.sol";
+import { StoreSwitch } from "@latticexyz/store/src/StoreSwitch.sol";
 
 import { BalanceTable, AllowanceTable, MetadataTable, ERC721Table} from "../codegen/Tables.sol";
 import { IERC165 } from "../common/IERC165.sol";
@@ -13,6 +14,12 @@ import { ERC721_METADATA_T as METADATA_T, ERC721_T, ERC721_BALANCE_T as BALANCE_
 import { IERC721Receiver } from "./interfaces/IERC721Receiver.sol";
 
 library LibERC721 {
+  modifier onlyProxyWorld(bytes16 namespace) {
+    ERC721Proxy _proxy = ERC721Proxy(proxy(namespace));
+    require(address(_proxy.world()) == StoreSwitch.getStoreAddress(), "ERC721: invalid world");
+    _;
+  }
+
   function getSelector(bytes16 namespace, bytes16 _name) private pure returns (bytes32) {
     return ResourceSelector.from(namespace, _name);
   }
@@ -428,27 +435,27 @@ library LibERC721 {
     BalanceTable.set(world, getSelector(namespace, BALANCE_T), account, balance + amount);
   }
 
-  function emitTransfer(bytes16 namespace, address from, address to, uint256 amount) internal {
+  function emitTransfer(bytes16 namespace, address from, address to, uint256 amount) internal onlyProxyWorld(namespace) {
     ERC721Proxy(proxy(namespace)).emitTransfer(from, to, amount);
   }
 
-  function emitTransfer(IBaseWorld world, bytes16 namespace, address from, address to, uint256 amount) internal {
+  function emitTransfer(IBaseWorld world, bytes16 namespace, address from, address to, uint256 amount) internal onlyProxyWorld(namespace) {
     ERC721Proxy(proxy(world, namespace)).emitTransfer(from, to, amount);
   }
 
-  function emitApproval(bytes16 namespace, address from, address to, uint256 amount) internal {
+  function emitApproval(bytes16 namespace, address from, address to, uint256 amount) internal onlyProxyWorld(namespace) {
     ERC721Proxy(proxy(namespace)).emitApproval(from, to, amount);
   }
 
-  function emitApproval(IBaseWorld world, bytes16 namespace, address from, address to, uint256 amount) internal {
+  function emitApproval(IBaseWorld world, bytes16 namespace, address from, address to, uint256 amount) internal onlyProxyWorld(namespace) {
     ERC721Proxy(proxy(world, namespace)).emitApproval(from, to, amount);
   }
 
-  function emitApprovalForAll(bytes16 namespace, address from, address to, bool approved) internal {
+  function emitApprovalForAll(bytes16 namespace, address from, address to, bool approved) internal onlyProxyWorld(namespace) {
     ERC721Proxy(proxy(namespace)).emitApprovalForAll(from, to, approved);
   }
 
-  function emitApprovalForAll(IBaseWorld world, bytes16 namespace, address from, address to, bool approved) internal {
+  function emitApprovalForAll(IBaseWorld world, bytes16 namespace, address from, address to, bool approved) internal onlyProxyWorld(namespace) {
     ERC721Proxy(proxy(world, namespace)).emitApprovalForAll(from, to, approved);
   }
 
@@ -878,27 +885,27 @@ library LibERC721 {
     BalanceTable.set(world, getSelector(ROOT_NAMESPACE, BALANCE_T), account, balance + amount);
   }
 
-  function emitTransfer(address from, address to, uint256 amount) internal {
+  function emitTransfer(address from, address to, uint256 amount) internal  onlyProxyWorld(ROOT_NAMESPACE){
     ERC721Proxy(proxy(ROOT_NAMESPACE)).emitTransfer(from, to, amount);
   }
 
-  function emitTransfer(IBaseWorld world, address from, address to, uint256 amount) internal {
+  function emitTransfer(IBaseWorld world, address from, address to, uint256 amount) internal onlyProxyWorld(ROOT_NAMESPACE) {
     ERC721Proxy(proxy(world, ROOT_NAMESPACE)).emitTransfer(from, to, amount);
   }
 
-  function emitApproval(address from, address to, uint256 amount) internal {
+  function emitApproval(address from, address to, uint256 amount) internal onlyProxyWorld(ROOT_NAMESPACE) {
     ERC721Proxy(proxy(ROOT_NAMESPACE)).emitApproval(from, to, amount);
   }
 
-  function emitApproval(IBaseWorld world, address from, address to, uint256 amount) internal {
+  function emitApproval(IBaseWorld world, address from, address to, uint256 amount) internal onlyProxyWorld(ROOT_NAMESPACE){
     ERC721Proxy(proxy(world, ROOT_NAMESPACE)).emitApproval(from, to, amount);
   }
 
-  function emitApprovalForAll(address from, address to, bool approved) internal {
+  function emitApprovalForAll(address from, address to, bool approved) internal  onlyProxyWorld(ROOT_NAMESPACE){
     ERC721Proxy(proxy(ROOT_NAMESPACE)).emitApprovalForAll(from, to, approved);
   }
 
-  function emitApprovalForAll(IBaseWorld world, address from, address to, bool approved) internal {
+  function emitApprovalForAll(IBaseWorld world, address from, address to, bool approved) internal onlyProxyWorld(ROOT_NAMESPACE){
     ERC721Proxy(proxy(world, ROOT_NAMESPACE)).emitApprovalForAll(from, to, approved);
   }
 }

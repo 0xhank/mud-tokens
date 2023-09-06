@@ -3,6 +3,7 @@ pragma solidity >=0.8.0;
 
 import { IBaseWorld } from "@latticexyz/world/src/interfaces/IBaseWorld.sol";
 import { ResourceSelector, ROOT_NAMESPACE } from "@latticexyz/world/src/ResourceSelector.sol";
+import { StoreSwitch } from "@latticexyz/store/src/StoreSwitch.sol";
 import { AllowanceTable, BalanceTable, MetadataTable } from "../codegen/Tables.sol";
 import { ERC20_ALLOWANCE_T as ALLOWANCE, ERC20_BALANCE_T as BALANCE, ERC20_METADATA_T as METADATA } from "../common/constants.sol";
 import { IERC20 } from "./interfaces/IERC20.sol";
@@ -10,6 +11,12 @@ import { IERC20Metadata } from "./interfaces/IERC20Metadata.sol";
 import { ERC20Proxy } from "./ERC20Proxy.sol";
 
 library LibERC20 {
+  modifier onlyProxyWorld(bytes16 namespace) {
+    ERC20Proxy _proxy = ERC20Proxy(proxy(namespace));
+    require(address(_proxy.world()) == StoreSwitch.getStoreAddress(), "ERC20: invalid world");
+    _;
+  }
+
   function from(bytes16 namespace, bytes16 _name) private pure returns (bytes32) {
     return ResourceSelector.from(namespace, _name);
   }
@@ -282,19 +289,19 @@ library LibERC20 {
     }
   }
 
-  function emitTransfer(bytes16 namespace, address _from, address to, uint256 amount) internal {
+  function emitTransfer(bytes16 namespace, address _from, address to, uint256 amount) internal onlyProxyWorld(namespace){
     ERC20Proxy(proxy(namespace)).emitTransfer(_from, to, amount);
   }
 
-  function emitTransfer(IBaseWorld world, bytes16 namespace, address _from, address to, uint256 amount) internal {
+  function emitTransfer(IBaseWorld world, bytes16 namespace, address _from, address to, uint256 amount) internal onlyProxyWorld(namespace) {
     ERC20Proxy(proxy(world, namespace)).emitTransfer(_from, to, amount);
   }
 
-  function emitApproval(bytes16 namespace, address _from, address to, uint256 amount) internal {
+  function emitApproval(bytes16 namespace, address _from, address to, uint256 amount) internal onlyProxyWorld(namespace){
     ERC20Proxy(proxy(namespace)).emitApproval(_from, to, amount);
   }
 
-  function emitApproval(IBaseWorld world, bytes16 namespace, address _from, address to, uint256 amount) internal {
+  function emitApproval(IBaseWorld world, bytes16 namespace, address _from, address to, uint256 amount) internal onlyProxyWorld(namespace){
     ERC20Proxy(proxy(world, namespace)).emitApproval(_from, to, amount);
   }
 
@@ -553,19 +560,19 @@ library LibERC20 {
     }
   }
 
-  function emitTransfer(address _from, address to, uint256 amount) internal {
+  function emitTransfer(address _from, address to, uint256 amount) internal onlyProxyWorld(ROOT_NAMESPACE){
     ERC20Proxy(proxy(ROOT_NAMESPACE)).emitTransfer(_from, to, amount);
   }
 
-  function emitTransfer(IBaseWorld world, address _from, address to, uint256 amount) internal {
+  function emitTransfer(IBaseWorld world, address _from, address to, uint256 amount) internal onlyProxyWorld(ROOT_NAMESPACE){
     ERC20Proxy(proxy(world, ROOT_NAMESPACE)).emitTransfer(_from, to, amount);
   }
 
-  function emitApproval(address _from, address to, uint256 amount) internal {
+  function emitApproval(address _from, address to, uint256 amount) internal onlyProxyWorld(ROOT_NAMESPACE){
     ERC20Proxy(proxy(ROOT_NAMESPACE)).emitApproval(_from, to, amount);
   }
 
-  function emitApproval(IBaseWorld world, address _from, address to, uint256 amount) internal {
+  function emitApproval(IBaseWorld world, address _from, address to, uint256 amount) internal onlyProxyWorld(ROOT_NAMESPACE){
     ERC20Proxy(proxy(world, ROOT_NAMESPACE)).emitApproval(_from, to, amount);
   }
 }
